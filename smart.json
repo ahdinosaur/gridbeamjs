@@ -1,5 +1,6 @@
 {
   "packages": {
-    "openjscad": {}
+    "three.js": {},
+    "ThreeCSG": {}
   }
 }

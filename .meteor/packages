@@ -7,4 +7,6 @@ standard-app-packages
 autopublish
 insecure
 preserve-inputs
-openjscad
+three.js
+jquery
+ThreeCSG

@@ -2,13 +2,19 @@
   "meteor": {},
   "dependencies": {
     "basePackages": {
-      "openjscad": {}
+      "three.js": {},
+      "ThreeCSG": {}
     },
     "packages": {
-      "openjscad": {
-        "git": "https://github.com/ahdinosaur/meteor-OpenJsCad",
+      "three.js": {
+        "git": "https://github.com/nozpheratu/three-meteor",
         "tag": "v0.0.1",
-        "commit": "b4410fb9953a7a23f8dc4b0949d2a8cd1a8fd356"
+        "commit": "a437d4e0314b055b19cfc60fa9e1ddfac844a0d9"
+      },
+      "ThreeCSG": {
+        "git": "https://github.com/ahdinosaur/meteor-ThreeCSG",
+        "tag": "v0.0.2",
+        "commit": "2dbf7b9604e28c796f12139acc6e8accfcafde33"
       }
     }
   }

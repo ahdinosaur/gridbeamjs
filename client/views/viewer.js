@@ -32,10 +32,7 @@ function init () {
     }
 
     createLight = function(){
-        var light = new THREE.PointLight(0xFF0000);
-        light.position.x=0;
-        light.position.y=0;
-        light.position.z=300;
+        var light = new THREE.HemisphereLight(0xFFFFFF, 0x000000);
         return light;
     }
 

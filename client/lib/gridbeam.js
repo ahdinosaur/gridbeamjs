@@ -55,9 +55,13 @@ var pieceGeometry = function() {
     geometry.computeVertexNormals();
     return geometry;
 }();
-var pieceMaterial = new THREE.MeshBasicMaterial({
-    shading: THREE.SmoothShading,
-    map: THREE.ImageUtils.loadTexture('img/douglas_fir.jpg')
+
+//var pieceTexture = THREE.ImageUtils.loadTexture('img/2checker.png');
+//pieceTexture.wrapS = pieceTexture.wrapT = THREE.RepeatWrapping;
+//pieceTexture.repeat.set(4, 4);
+var pieceMaterial = new THREE.MeshNormalMaterial({
+    //map: pieceTexture,
+    //color: getRandomColor()
 });
 
 var piece = function(i) {

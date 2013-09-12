@@ -61,7 +61,7 @@ function init () {
     controls = new THREE.OrbitControls(camera, renderer.domElement);
 
     scene.add(light);
-    scene.add(zBeam(10));
+    scene.add(beam(10));
     scene.add(new THREE.AxisHelper(100));
     scene.add(new THREE.GridHelper(beam_width * 30, beam_width));
 }

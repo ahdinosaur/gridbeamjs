@@ -10,3 +10,15 @@ preserve-inputs
 three.js
 jquery
 ThreeCSG
+bootstrap-3
+accounts-ui-bootstrap-3
+accounts-password
+accounts-github
+accounts-twitter
+accounts-facebook
+accounts-google
+accounts-weibo
+accounts-meetup
+accounts-persona
+iron-router
+spin

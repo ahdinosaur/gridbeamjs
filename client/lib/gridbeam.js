@@ -61,7 +61,7 @@ var pieceGeometry = function() {
 //pieceTexture.repeat.set(4, 4);
 var pieceMaterial = new THREE.MeshNormalMaterial({
     //map: pieceTexture,
-    //color: getRandomColor()
+    //color: Random.hexString(6)
 });
 
 var piece = function(i) {
@@ -72,7 +72,7 @@ var piece = function(i) {
     return mesh
 }
 
-zBeam = function (length) {
+beam = function (length) {
     var pole = new THREE.Object3D();
 
     for (var i = 0; i < length; i++) {

@@ -1,6 +1,11 @@
 {
   "packages": {
     "three.js": {},
-    "ThreeCSG": {}
+    "ThreeCSG": {},
+    "bootstrap-3": {},
+    "accounts-ui-bootstrap-3": {},
+    "accounts-persona": {},
+    "iron-router": {},
+    "spin": {}
   }
 }

@@ -8,7 +8,8 @@
       "accounts-ui-bootstrap-3": {},
       "accounts-persona": {},
       "iron-router": {},
-      "spin": {}
+      "spin": {},
+      "event-hooks": {}
     },
     "packages": {
       "three.js": {
@@ -45,6 +46,11 @@
         "git": "https://github.com/SachaG/meteor-spin.git",
         "tag": "v0.2.0",
         "commit": "fd3a2871a69442848b4b4e74f5e1ae28fa4a95a4"
+      },
+      "event-hooks": {
+        "git": "https://github.com/BenjaminRH/meteor-event-hooks.git",
+        "tag": "v1.4.3",
+        "commit": "ba4f3d7887748458618d29615492906f0c88d31c"
       }
     }
   }

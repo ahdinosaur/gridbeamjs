@@ -50,11 +50,27 @@ function GridBeam (csg, options = {}) {
   } = options
 
   return {
-    xBeam,
-    yBeam,
-    zBeam,
-    translateBeam
+    beam
   }
+
+  /* public */
+
+  function beam ({ position, direction, length }) {
+    var beam =
+      direction === 'x'
+        ? xBeam(length)
+        : direction === 'y'
+          ? yBeam(length)
+          : direction === 'z'
+            ? zBeam(length)
+            : new Error(`beam: unexpected direction: ${direction}`)
+
+    beam = translate(beam, position)
+
+    return beam
+  }
+
+  /* private */
 
   function xHole (i) {
     return CSG.cylinder({
@@ -89,14 +105,14 @@ function GridBeam (csg, options = {}) {
   }
 
   function yBeam (length) {
-    return translateBeam(zBeam(length).rotateX(-90), [0, 0, 1])
+    return translate(zBeam(length).rotateX(-90), [0, 0, 1])
   }
 
   function xBeam (length) {
-    return translateBeam(zBeam(length).rotateY(90), [0, 0, 1])
+    return translate(zBeam(length).rotateY(90), [0, 0, 1])
   }
 
-  function translateBeam (beam, vector) {
+  function translate (beam, vector) {
     return beam.translate(
       vector.map(function (n) {
         return beamWidth * n

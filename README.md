@@ -1,4 +1,4 @@
-# gridbeam-playground
+# gridbeamjs
 
 play around with grid beam
 
@@ -18,11 +18,9 @@ on each pole's short sides, there are grid holes separated by the width distance
 
 the first grid hole starts at 1/2 of the width distance, so a compatible beam can be cut in half and still be compatible.
 
-## usage
+## modules
 
-```shell
-npm install gridbeam
-```
+- [`gridbeam-csg`](./packages/gridbeam-csg)
 
 ## license
 

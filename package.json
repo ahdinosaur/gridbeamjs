@@ -1,23 +1,11 @@
 {
-  "name": "gridbeam",
-  "version": "0.0.0",
-  "description": "grid beam using constructive solid geometry (CSG)",
-  "main": "index.js",
+  "name": "gridbeamjs",
+  "private": true,
   "scripts": {
-    "start": "node example | meshview",
     "style:format": "prettier-standard '**/*.js' '**/*.md'",
     "style:lint": "standard",
     "style": "npm-run-all -s style:format style:lint",
-    "test:deps": "dependency-check . && dependency-check . --extra --no-dev -i es2040",
-    "test:node": "ava",
-    "test:coverage": "nyc npm run test:node",
-    "test:coverage:report": "nyc report --reporter=lcov npm run test:node",
-    "test": "npm-run-all -s test:node style:lint test:deps"
-  },
-  "browserify": {
-    "transform": [
-      "es2040"
-    ]
+    "test": "lerna run test"
   },
   "lint-staged": {
     "linters": {
@@ -32,41 +20,12 @@
       ]
     }
   },
-  "standard": {
-    "globals": []
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ahdinosaur/gridbeam.git"
-  },
-  "keywords": [],
-  "author": "Mikey <michael.williams@enspiral.com> (https://dinosaur.is)",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/ahdinosaur/gridbeam/issues"
-  },
-  "homepage": "https://github.com/ahdinosaur/gridbeam#readme",
   "devDependencies": {
-    "@jscad/csg": "^0.7.0",
-    "ava": "^0.25.0",
-    "browserify": "^16.2.2",
-    "budo": "^11.3.2",
-    "csg-to-mesh": "^1.0.2",
-    "dependency-check": "^3.1.0",
-    "disc": "^1.3.3",
+    "lerna": "^3.16.3",
     "husky": "^0.14.3",
     "lint-staged": "^7.0.5",
-    "meshview": "^1.3.3",
     "npm-run-all": "^4.0.1",
-    "nyc": "^11.7.1",
     "prettier-standard": "^8.0.1",
-    "standard": "^11.0.1",
-    "uglifyify": "^5.0.1"
-  },
-  "dependencies": {
-    "es2040": "^1.2.3"
-  },
-  "peerDependencies": {
-    "@jscad/csg": "^0.7.0"
+    "standard": "^11.0.1"
   }
 }

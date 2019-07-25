@@ -50,12 +50,12 @@ function GridBeam (csg, options = {}) {
   } = options
 
   return {
-    beam
+    Beam
   }
 
   /* public */
 
-  function beam ({ position, direction, length }) {
+  function Beam ({ origin, direction, length }) {
     var beam =
       direction === 'x'
         ? xBeam(length)
@@ -65,7 +65,7 @@ function GridBeam (csg, options = {}) {
             ? zBeam(length)
             : new Error(`beam: unexpected direction: ${direction}`)
 
-    beam = translate(beam, position)
+    beam = translate(beam, origin)
 
     return beam
   }

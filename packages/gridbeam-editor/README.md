@@ -1,32 +1,20 @@
-# gridbeam-csg
+# gridbeam-editor
 
-GridBeam using constructive solid geometry (CSG)
+edit GridBeam!
+
+## cli usage
 
 ```shell
-npm install --save gridbeam-csg
+npm install --global gridbeam-editor
+
+gridbeam-editor
 ```
-
-## usage
-
-### `GridBeam = require('gridbeam-csg')`
-
-### `{ Beam } = GridBeam(csg)
-
-where `csg` is from [`@jscad/csd`](https://github.com/jscad/csg.js#readme)
-
-### `beam = Beam(options)`
-
-`options`:
-
-- `origin`: array tuple of `[x, y, z]`
-- `direction`: enum of `'x'`, `'y'`, or `'z'`
-- `length`: integer
 
 ## license
 
 The Apache License
 
-Copyright &copy; 2018 Michael Williams
+Copyright &copy; 2019 Michael Williams
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

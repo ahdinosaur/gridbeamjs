@@ -1,9 +1,9 @@
 const csg = require('@jscad/csg')
 const csgToMesh = require('csg-to-mesh')
 
-const GridBeam = require('./')(csg)
+const { Beam } = require('./')(csg)
 
-const beam = GridBeam.beam({
+const beam = Beam({
   position: [0, 0, 0],
   direction: 'z',
   length: 10

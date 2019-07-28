@@ -56,7 +56,9 @@
     "gridbeam-csg": "0.0.0",
     "react": "^16.8.6",
     "react-regl": "^3.1.1",
+    "react-use-gesture": "^5.2.1",
     "rebass": "^3.1.2",
-    "styled-components": "^4.3.2"
+    "styled-components": "^4.3.2",
+    "use-viewport-sizes": "^0.2.6"
   }
 }

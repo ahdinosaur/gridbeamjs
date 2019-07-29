@@ -34,11 +34,12 @@ parameters
   ]
 */
 
-module.exports = GridBeam
-
 const DEFAULT_CYLINDER_RESOLUTION = 16
 const DEFAULT_BEAM_WIDTH = 10
 const DEFAULT_HOLE_RADIUS = 2.4
+
+module.exports = GridBeam
+module.exports.DEFAULT_BEAM_WIDTH = DEFAULT_BEAM_WIDTH
 
 function GridBeam (csg, options = {}) {
   const CSG = csg.CSG

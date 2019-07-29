@@ -26,6 +26,19 @@ var model = {
 const element = document.createElement('main')
 document.body.appendChild(element)
 
-setInterval(() => {
-  ReactDom.render(<GridBeamEditor model={model} />, element)
-}, 1000)
+const style = document.createElement('style')
+document.head.appendChild(style)
+const { sheet } = style
+sheet.insertRule(
+  `
+  html, body, main {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
+`,
+  0
+)
+
+ReactDom.render(<GridBeamEditor model={model} />, element)

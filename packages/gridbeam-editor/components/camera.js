@@ -7,12 +7,15 @@ extend({ OrbitControls })
 module.exports = Camera
 
 function Camera (props) {
+  const { controlEnabled = true } = props
+
   const controlsRef = React.useRef()
   const { camera } = useThree()
 
   React.useEffect(() => {
     const controls = controlsRef.current
-    camera.position.set(0, 0, 1)
+    camera.far = 10000
+    camera.position.set(0, 0, 1000)
     controls.rotateLeft(-Math.PI / 32)
     controls.rotateUp(Math.PI / 64)
     camera.zoom = 2.5
@@ -27,6 +30,7 @@ function Camera (props) {
     <orbitControls
       ref={controlsRef}
       args={[camera]}
+      enabled={controlEnabled}
       enableDamping
       dampingFactor={0.1}
       rotateSpeed={0.1}

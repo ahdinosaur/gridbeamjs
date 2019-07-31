@@ -1,59 +1,57 @@
 const React = require('react')
 const THREE = require('three')
+const Normals = require('normals')
 const { useUpdate } = require('react-three-fiber')
 
 module.exports = SimplicialComplexGeometry
 
 function SimplicialComplexGeometry (props) {
   const { mesh, attach } = props
-  const { positions, cells } = mesh
+  var { positions, cells } = mesh
+
+  console.log('mesh', mesh)
 
   const ref = useUpdate(
     geometry => {
-      updatePositions(geometry, positions)
       updateCells(geometry, cells)
-      // geometry.computeFaceNormals()
-      // geometry.computeFlatVertexNormals()
+      updatePositions(geometry, positions)
+      updateNormals(geometry, cells, positions)
+      console.log('geometry', geometry)
     },
     [mesh]
   )
 
-  return (
-    <geometry
-      attach={attach}
-      ref={ref}
-      vertices={positions.map(pos => new THREE.Vector3().fromArray(pos))}
-      faces={cells.map(cell => new THREE.Face3(cell[0], cell[1], cell[2]))}
-    />
-  )
-}
-
-function updatePositions (geometry, positions) {
-  for (var i = 0; i < positions.length; i++) {
-    var pos = positions[i]
-    if (i > geometry.vertices.length - 1) {
-      geometry.vertices.push(new THREE.Vector3().fromArray(pos))
-    } else {
-      geometry.vertices[i].fromArray(pos)
-    }
-  }
-  geometry.vertices.length = positions.length
-  geometry.verticesNeedUpdate = true
+  return <bufferGeometry attach={attach} ref={ref} />
 }
 
 function updateCells (geometry, cells) {
-  for (var i = 0; i < cells.length; i++) {
-    var cell = cells[i]
-    if (i > geometry.faces.length - 1) {
-      geometry.faces.push(new THREE.Face3(cell[0], cell[1], cell[2]))
-    } else {
-      var face = geometry.faces[i]
-      face.a = face[0]
-      face.b = face[1]
-      face.c = face[2]
+  geometry.setIndex(toBufferAttribute(cells, Uint32Array))
+  geometry.index.needsUpdate = true
+}
+
+function updatePositions (geometry, positions) {
+  geometry.addAttribute('position', toBufferAttribute(positions, Float32Array))
+  geometry.attributes.position.needsUpdate = true
+}
+
+function updateNormals (geometry, cells, positions) {
+  const faceNormals = Normals.vertexNormals(cells, positions)
+  geometry.addAttribute('normal', toBufferAttribute(faceNormals, Float32Array))
+  geometry.attributes.normal.needsUpdate = true
+}
+
+// TODO use flatten-vertex-data
+function toBufferAttribute (items, TypedArray) {
+  const itemSize = items[0].length
+  const bufferLength = itemSize * items.length
+
+  var bufferArray = new TypedArray(bufferLength)
+
+  for (var i = 0, k = 0; i < items.length; i++) {
+    for (var j = 0; j < itemSize; j++) {
+      bufferArray[k++] = items[i][j]
     }
   }
 
-  geometry.faces.length = cells.length
-  geometry.elementsNeedUpdate = true
+  return new THREE.BufferAttribute(bufferArray, itemSize)
 }

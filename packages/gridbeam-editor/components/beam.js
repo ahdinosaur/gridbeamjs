@@ -13,7 +13,7 @@ function Beam ({ beam }) {
   return (
     <mesh>
       <Complex mesh={mesh} attach='geometry' />
-      {/* <meshNormalMaterial attach='material' /> */}
+      <meshNormalMaterial attach='material' />
     </mesh>
   )
 }

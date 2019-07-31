@@ -2,7 +2,7 @@ const React = require('react')
 const THREE = require('three')
 const { Canvas } = require('react-three-fiber')
 const { DEFAULT_BEAM_WIDTH } = require('gridbeam-csg')
-const { map } = require('lodash')
+const { assign, map, omit } = require('lodash')
 
 console.log('DEFAULT_BEAM_WIDTH', DEFAULT_BEAM_WIDTH)
 
@@ -38,7 +38,7 @@ function GridBeamViewer ({ size, model }) {
     []
   )
 
-  const [hoveredBeamUuid, setHoveredBeamUuid] = React.useState(null)
+  const [hoveredBeamByUuid, setHoveredBeamByUuid] = React.useState({})
   const [selectedBeamUuid, setSelectedBeamUuid] = React.useState(null)
 
   return (
@@ -53,12 +53,17 @@ function GridBeamViewer ({ size, model }) {
             key={uuid}
             uuid={uuid}
             beam={beam}
-            isHovered={hoveredBeamUuid === uuid}
+            isHovered={Boolean(hoveredBeamByUuid[uuid])}
             hover={() => {
-              // HACK to handle moving across adjacent beams
-              setTimeout(() => setHoveredBeamUuid(uuid), 30)
+              setHoveredBeamByUuid(hoveredBeamByUuid =>
+                assign({}, hoveredBeamByUuid, { [uuid]: true })
+              )
             }}
-            unhover={() => setHoveredBeamUuid(null)}
+            unhover={() =>
+              setHoveredBeamByUuid(hoveredBeamByUuid =>
+                omit(hoveredBeamByUuid, uuid)
+              )
+            }
             isSelected={selectedBeamUuid === uuid}
             select={() => setSelectedBeamUuid(uuid)}
             enableCameraControl={enableCameraControl}

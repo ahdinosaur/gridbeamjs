@@ -3,7 +3,7 @@ const ReactDom = require('react-dom')
 
 const GridBeamEditor = require('./')
 
-var model = {
+var initialModel = {
   beams: [
     {
       direction: 'x',
@@ -41,4 +41,4 @@ sheet.insertRule(
   0
 )
 
-ReactDom.render(<GridBeamEditor model={model} />, element)
+ReactDom.render(<GridBeamEditor initialModel={initialModel} />, element)

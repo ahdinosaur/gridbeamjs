@@ -2,15 +2,19 @@ const React = require('react')
 const { extend, useThree, useRender } = require('react-three-fiber')
 const OrbitControls = require('../vendor/OrbitControls')
 
+const useCameraStore = require('../stores/camera').default
+
 extend({ OrbitControls })
 
 module.exports = Camera
 
 function Camera (props) {
-  const { controlEnabled = true } = props
-
   const controlsRef = React.useRef()
   const { camera } = useThree()
+
+  const controlEnabled = useCameraStore(state => state.controlEnabled)
+
+  console.log('controlEnabled', controlEnabled)
 
   React.useEffect(() => {
     const controls = controlsRef.current

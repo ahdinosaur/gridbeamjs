@@ -1,21 +1,19 @@
 const React = require('react')
 const THREE = require('three')
-const { Canvas } = require('react-three-fiber')
 const { DEFAULT_BEAM_WIDTH } = require('gridbeam-csg')
-const { assign, map, omit } = require('lodash')
-const styled = require('styled-components').default
+const { assign, map } = require('lodash')
+const { default: styled } = require('styled-components')
 
 console.log('DEFAULT_BEAM_WIDTH', DEFAULT_BEAM_WIDTH)
 
-const Beam = require('./components/beam')
-const Camera = require('./components/camera')
+const Provider = require('./components/provider')
+const Sidebar = require('./components/sidebar')
+const Vis = require('./components/vis')
 
-module.exports = GridBeamViewer
+module.exports = GridBeamEditor
 
-function GridBeamViewer ({ size, model }) {
-  if (size == null) {
-    size = [window.innerWidth, window.innerHeight]
-  }
+function GridBeamEditor ({ initialModel }) {
+  const [model, setModel] = React.useState(initialModel)
 
   const beamsByUuid = React.useMemo(
     () => {
@@ -28,17 +26,6 @@ function GridBeamViewer ({ size, model }) {
     },
     [model]
   )
-
-  const [cameraControlEnabled, setCameraControlEnabled] = React.useState(true)
-  const enableCameraControl = React.useCallback(
-    () => setCameraControlEnabled(true),
-    []
-  )
-  const disableCameraControl = React.useCallback(
-    () => setCameraControlEnabled(false),
-    []
-  )
-
   const [hoveredBeamByUuid, setHoveredBeamByUuid] = React.useState({})
   const [selectedBeamUuid, setSelectedBeamUuid] = React.useState(null)
 
@@ -47,40 +34,35 @@ function GridBeamViewer ({ size, model }) {
     selectedBeamUuid
   ])
 
+  const updateSelectedBeam = React.useCallback(
+    nextBeam => {
+      const nextBeams = map(model.beams, beam => {
+        return beam === selectedBeam ? nextBeam : beam
+      })
+      const nextModel = assign({}, model, {
+        beams: nextBeams
+      })
+      setModel(nextModel)
+    },
+    [model]
+  )
+
   return (
-    <Container>
-      <Sidebar selectedBeam={selectedBeam} />
-      <Canvas orthographic>
-        <hemisphereLight args={[0xffffbb, 0x080820]} />
-        <Camera controlEnabled={cameraControlEnabled} />
-        <axesHelper args={[100]} />
-        <gridHelper args={[1000, 1000 / DEFAULT_BEAM_WIDTH]} />
-        {map(beamsByUuid, (beam, uuid) => {
-          return (
-            <Beam
-              key={uuid}
-              uuid={uuid}
-              beam={beam}
-              isHovered={Boolean(hoveredBeamByUuid[uuid])}
-              hover={() => {
-                setHoveredBeamByUuid(hoveredBeamByUuid =>
-                  assign({}, hoveredBeamByUuid, { [uuid]: true })
-                )
-              }}
-              unhover={() =>
-                setHoveredBeamByUuid(hoveredBeamByUuid =>
-                  omit(hoveredBeamByUuid, uuid)
-                )
-              }
-              isSelected={selectedBeamUuid === uuid}
-              select={() => setSelectedBeamUuid(uuid)}
-              enableCameraControl={enableCameraControl}
-              disableCameraControl={disableCameraControl}
-            />
-          )
-        })}
-      </Canvas>
-    </Container>
+    <Provider>
+      <Container>
+        <Sidebar
+          selectedBeam={selectedBeam}
+          updateSelectedBeam={updateSelectedBeam}
+        />
+        <Vis
+          beamsByUuid={beamsByUuid}
+          selectedBeamUuid={selectedBeamUuid}
+          setSelectedBeamUuid={setSelectedBeamUuid}
+          hoveredBeamByUuid={hoveredBeamByUuid}
+          setHoveredBeamByUuid={setHoveredBeamByUuid}
+        />
+      </Container>
+    </Provider>
   )
 }
 
@@ -92,16 +74,4 @@ const Container = styled.div({
   display: 'flex',
   flexDirection: 'row',
   flexWrap: 'nowrap'
-})
-
-function Sidebar (props) {
-  const { selectedBeam } = props
-
-  return (
-    <SidebarContainer>{JSON.stringify(selectedBeam, null, 2)}</SidebarContainer>
-  )
-}
-
-const SidebarContainer = styled.div({
-  width: '20vw'
 })

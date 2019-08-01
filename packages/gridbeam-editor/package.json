@@ -15,6 +15,9 @@
           "presets": [
             "@babel/preset-env",
             "@babel/preset-react"
+          ],
+          "plugins": [
+            "babel-plugin-styled-components"
           ]
         }
       ]
@@ -40,6 +43,7 @@
   "homepage": "https://github.com/ahdinosaur/gridbeamjs/tree/master/packages/gridbeam-csg/#readme",
   "devDependencies": {
     "@jscad/csg": "^0.7.0",
+    "babel-plugin-styled-components": "^1.10.6",
     "budo": "^11.6.2",
     "dependency-check": "^3.1.0",
     "react-dom": "^16.8.6"
@@ -49,6 +53,7 @@
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
     "babelify": "^10.0.0",
+    "constate": "^1.2.0",
     "csg-to-mesh": "^1.0.2",
     "gl-mat4": "^1.2.0",
     "gridbeam-csg": "0.0.0",
@@ -56,8 +61,10 @@
     "normals": "^1.1.0",
     "react": "^16.8.6",
     "react-three-fiber": "^2.2.14",
+    "reakit": "^1.0.0-beta.4",
     "rebass": "^3.1.2",
     "styled-components": "^4.3.2",
-    "three": "^0.106.2"
+    "three": "^0.106.2",
+    "zustand": "^1.0.3"
   }
 }

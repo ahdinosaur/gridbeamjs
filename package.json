@@ -27,5 +27,6 @@
     "npm-run-all": "^4.0.1",
     "prettier-standard": "^8.0.1",
     "standard": "^11.0.1"
-  }
+  },
+  "dependencies": {}
 }

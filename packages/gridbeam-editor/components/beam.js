@@ -28,18 +28,15 @@ function Beam (props) {
   const handleHover = React.useCallback(ev => {
     ev.stopPropagation()
     hover()
-    console.log('hover', ev)
   }, [])
 
   const handleUnhover = React.useCallback(ev => {
     ev.stopPropagation()
     unhover()
-    console.log('unhover', ev)
   }, [])
 
   const handleClick = React.useCallback(ev => {
     ev.stopPropagation()
-    console.log('click', ev)
     select()
   }, [])
 
@@ -58,13 +55,11 @@ function Beam (props) {
       onPointerDown={ev => {
         ev.stopPropagation()
         ev.target.setPointerCapture(ev.pointerId)
-        console.log('disable')
         disableCameraControl()
       }}
       onPointerUp={ev => {
         ev.stopPropagation()
         ev.target.releasePointerCapture(ev.pointerId)
-        console.log('enable')
         enableCameraControl()
       }}
       onPointerMove={handleMove}

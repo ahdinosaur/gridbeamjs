@@ -45,7 +45,7 @@ function Vis (props) {
     <Canvas orthographic>
       <hemisphereLight args={[0xffffbb, 0x080820]} />
       <Camera />
-      <axesHelper args={[100]} />
+      <axesHelper args={[1000]} />
       <gridHelper args={[1000, 1000 / DEFAULT_BEAM_WIDTH]} />
       {renderParts(parts)}
     </Canvas>

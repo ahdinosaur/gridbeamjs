@@ -11,12 +11,12 @@ const Complex = require('./complex')
 module.exports = Beam
 
 function Beam (props) {
-  const { uuid, beam, isHovered, hover, unhover, isSelected, select } = props
+  const { uuid, value, isHovered, hover, unhover, isSelected, select } = props
 
   const enableCameraControl = useCameraStore(state => state.enableControl)
   const disableCameraControl = useCameraStore(state => state.disableControl)
 
-  const mesh = React.useMemo(() => beamToMesh(beam), [beam])
+  const mesh = React.useMemo(() => beamToMesh(value), [value])
 
   const handleMove = React.useCallback(ev => {
     ev.stopPropagation()

@@ -1,29 +1,19 @@
 const THREE = require('three')
 const create = require('./').default
-const { equals, map, prop } = require('ramda')
+const { map, zipObj } = require('ramda')
 
 const generateUuids = map(() => THREE.Math.generateUUID())
 
-// TODO model.beams -> model.parts
-// current beam becomes a generic part with type 'beam'
-
 const [useModelStore] = create(set => ({
-  model: null,
-  uuids: [],
-  setModel: model =>
+  parts: {},
+  setParts: parts =>
     set(state => {
-      state.model = model
-      state.uuids = generateUuids(model.beams)
+      const uuids = generateUuids(parts)
+      state.parts = zipObj(uuids, parts)
     }),
   ...createBeamHappening(set, 'hover'),
   ...createBeamHappening(set, 'select'),
-  update: (uuid, updater) =>
-    set(state => {
-      var { model, uuids } = state
-      var index = uuids.findIndex(equals(uuid))
-      var beam = model.beams[index]
-      updater(beam)
-    })
+  update: (uuid, updater) => set(state => updater(state.parts[uuid]))
 }))
 
 module.exports = useModelStore

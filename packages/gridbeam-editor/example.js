@@ -3,25 +3,26 @@ const ReactDom = require('react-dom')
 
 const GridBeamEditor = require('./')
 
-var initialModel = {
-  beams: [
-    {
-      direction: 'x',
-      origin: [0, 0, 0],
-      length: 2
-    },
-    {
-      direction: 'y',
-      origin: [0, 0, 0],
-      length: 5
-    },
-    {
-      direction: 'z',
-      origin: [0, 0, 0],
-      length: 10
-    }
-  ]
-}
+var initialParts = [
+  {
+    type: 'beam',
+    direction: 'x',
+    origin: [0, 0, 0],
+    length: 2
+  },
+  {
+    type: 'beam',
+    direction: 'y',
+    origin: [0, 0, 0],
+    length: 5
+  },
+  {
+    type: 'beam',
+    direction: 'z',
+    origin: [0, 0, 0],
+    length: 10
+  }
+]
 
 const element = document.createElement('main')
 document.body.appendChild(element)
@@ -41,4 +42,4 @@ sheet.insertRule(
   0
 )
 
-ReactDom.render(<GridBeamEditor initialModel={initialModel} />, element)
+ReactDom.render(<GridBeamEditor initialParts={initialParts} />, element)

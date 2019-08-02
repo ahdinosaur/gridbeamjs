@@ -3,7 +3,7 @@ const { Box, Flex, Text } = require('rebass')
 const Group = require('reakit/Group').default
 const { default: styled } = require('styled-components')
 const { set } = require('lodash')
-const { findIndex, mapObjIndexed, pipe, prop, values } = require('ramda')
+const { mapObjIndexed, keys, pick, pipe, prop, values } = require('ramda')
 
 const useCameraStore = require('../stores/camera').default
 const useModelStore = require('../stores/model')
@@ -11,24 +11,18 @@ const useModelStore = require('../stores/model')
 module.exports = Sidebar
 
 function Sidebar (props) {
-  const model = useModelStore(prop('model'))
-  const uuids = useModelStore(prop('uuids'))
+  const parts = useModelStore(prop('parts'))
   const selectedUuids = useModelStore(prop('selectedUuids'))
   const update = useModelStore(prop('update'))
 
-  const selectedParts = React.useMemo(
-    () =>
-      Object.keys(selectedUuids).reduce((sofar, selectedUuid) => {
-        const index = uuids.findIndex(uuid => uuid === selectedUuid)
-        sofar[selectedUuid] = model.beams[index]
-        return sofar
-      }, {}),
-    [model, uuids, selectedUuids]
-  )
+  const selectedParts = React.useMemo(() => pick(keys(selectedUuids), parts), [
+    parts,
+    selectedUuids
+  ])
 
-  const renderSelectedParts = React.useMemo(() =>
-    pipe(
-      mapObjIndexed((selected, uuid) => (
+  const renderPart = React.useMemo(
+    () => {
+      const renderBeam = (selected, uuid) => (
         <ControlSection key={uuid} title='selected beam'>
           <InputControl
             update={next => update(uuid, next)}
@@ -59,9 +53,22 @@ function Sidebar (props) {
             type='number'
           />
         </ControlSection>
-      )),
-      values
-    )
+      )
+
+      const renderers = {
+        beam: renderBeam
+      }
+
+      return (selected, uuid) => {
+        const renderer = renderers[selected.type]
+        return renderer(selected, uuid)
+      }
+    },
+    [update]
+  )
+
+  const renderSelectedParts = React.useMemo(() =>
+    pipe(mapObjIndexed(renderPart), values)
   )
 
   if (Object.keys(selectedUuids).length === 0) return null

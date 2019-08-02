@@ -2,42 +2,74 @@ const React = require('react')
 const { Box, Flex, Text } = require('rebass')
 const Group = require('reakit/Group').default
 const { default: styled } = require('styled-components')
-const { cloneDeep, set } = require('lodash')
+const { set } = require('lodash')
+const { findIndex, mapObjIndexed, pipe, prop, values } = require('ramda')
 
 const useCameraStore = require('../stores/camera').default
+const useModelStore = require('../stores/model')
 
 module.exports = Sidebar
 
 function Sidebar (props) {
-  const { selectedBeam, updateSelectedBeam } = props
+  const model = useModelStore(prop('model'))
+  const uuids = useModelStore(prop('uuids'))
+  const selectedUuids = useModelStore(prop('selectedUuids'))
+  const update = useModelStore(prop('update'))
 
-  const updateBeamField = React.useCallback(
-    (fieldName, value) => {
-      console.log('updateBeamField', fieldName, value, selectedBeam)
-      var nextBeam = cloneDeep(selectedBeam)
-      set(nextBeam, fieldName, value)
-      console.log('nextBeam', nextBeam)
-      updateSelectedBeam(nextBeam)
-    },
-    [selectedBeam]
+  const selectedParts = React.useMemo(
+    () =>
+      Object.keys(selectedUuids).reduce((sofar, selectedUuid) => {
+        const index = uuids.findIndex(uuid => uuid === selectedUuid)
+        sofar[selectedUuid] = model.beams[index]
+        return sofar
+      }, {}),
+    [model, uuids, selectedUuids]
   )
 
-  if (selectedBeam == null) return null
+  const renderSelectedParts = React.useMemo(() =>
+    pipe(
+      mapObjIndexed((selected, uuid) => (
+        <ControlSection key={uuid} title='selected beam'>
+          <InputControl
+            update={next => update(uuid, next)}
+            name='length'
+            label='length'
+            value={selected.length}
+            type='number'
+          />
+          <InputControl
+            update={next => update(uuid, next)}
+            name='origin[0]'
+            label='origin.y'
+            value={selected.origin[0]}
+            type='number'
+          />
+          <InputControl
+            update={next => update(uuid, next)}
+            name='origin[1]'
+            label='origin.y'
+            value={selected.origin[1]}
+            type='number'
+          />
+          <InputControl
+            update={next => update(uuid, next)}
+            name='origin[2]'
+            label='origin.z'
+            value={selected.origin[2]}
+            type='number'
+          />
+        </ControlSection>
+      )),
+      values
+    )
+  )
 
-  console.log('selectedBeam', selectedBeam)
+  if (Object.keys(selectedUuids).length === 0) return null
 
   return (
     <SidebarContainer>
-      {JSON.stringify(selectedBeam, null, 2)}
-      <ControlSection title='selected beam'>
-        <InputControl
-          updateField={updateBeamField}
-          name='origin[0]'
-          label='origin.x'
-          value={selectedBeam.origin[0]}
-          type='number'
-        />
-      </ControlSection>
+      {JSON.stringify(selectedParts, null, 2)}
+      {renderSelectedParts(selectedParts)}
     </SidebarContainer>
   )
 }
@@ -76,10 +108,12 @@ const ControlSection = props => {
 }
 
 const InputControl = props => {
-  const { name, label, value, updateField, ...inputProps } = props
+  const { name, path, label, value, update, ...inputProps } = props
 
   const handleChange = React.useCallback(ev => {
-    updateField(name, Number(ev.target.value))
+    update(object => {
+      set(object, name, Number(ev.target.value))
+    })
   }, [])
 
   return (
@@ -87,6 +121,7 @@ const InputControl = props => {
       <label name={name}>{label}</label>
       <input
         name={name}
+        path={path}
         value={value}
         onChange={handleChange}
         {...inputProps}

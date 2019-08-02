@@ -1,2 +1,5 @@
-- beam store
-  - with uuid
+- optimize 3d
+  - rotate in threejs, not csg
+  - pre-cache common sizes of geometry
+  - store with uuids, have separate codec
+- make landing website

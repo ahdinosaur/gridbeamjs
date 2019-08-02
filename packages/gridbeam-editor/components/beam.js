@@ -21,22 +21,25 @@ function Beam (props) {
   const handleMove = React.useCallback(ev => {
     ev.stopPropagation()
     if (ev.buttons > 0) {
-      console.log('move', ev)
+      // console.log('move', uuid)
     }
   }, [])
 
   const handleHover = React.useCallback(ev => {
     ev.stopPropagation()
+    // console.log('hover', uuid)
     hover()
   }, [])
 
   const handleUnhover = React.useCallback(ev => {
     ev.stopPropagation()
+    // console.log('unhover', uuid)
     unhover()
   }, [])
 
   const handleClick = React.useCallback(ev => {
     ev.stopPropagation()
+    // console.log('click', uuid)
     select()
   }, [])
 

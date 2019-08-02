@@ -14,8 +14,6 @@ function Camera (props) {
 
   const controlEnabled = useCameraStore(state => state.controlEnabled)
 
-  console.log('controlEnabled', controlEnabled)
-
   React.useEffect(() => {
     const controls = controlsRef.current
     camera.far = 10000

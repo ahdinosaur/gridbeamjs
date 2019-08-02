@@ -1,62 +1,59 @@
 const THREE = require('three')
 const create = require('./').default
-const { map, prop } = require('ramda')
-
-console.log('THREE', THREE)
+const { equals, map, prop } = require('ramda')
 
 const generateUuids = map(() => THREE.Math.generateUUID())
-// const generateUuids = map(() => 'arst')
+
+// TODO model.beams -> model.parts
+// current beam becomes a generic part with type 'beam'
 
 const [useModelStore] = create(set => ({
   model: null,
-  beamUuids: [],
+  uuids: [],
   setModel: model =>
     set(state => {
       state.model = model
-      state.beamUuids = generateUuids(model.beams)
+      state.uuids = generateUuids(model.beams)
     }),
-  ...createBeamHappening('hover'),
-  ...createBeamHappening('select'),
-  updateBeam: (uuid, nextBeam) => ({ model, beamUuids }) => {
-    const index = beamUuids.findIndex(uuid)
-    const nextBeams = model.beams.splice(index, 1, nextBeam)
-    const nextModel = Object.assign({}, model, { beams: nextBeams })
-    return { model: nextModel }
-  }
+  ...createBeamHappening(set, 'hover'),
+  ...createBeamHappening(set, 'select'),
+  update: (uuid, updater) =>
+    set(state => {
+      var { model, uuids } = state
+      var index = uuids.findIndex(equals(uuid))
+      var beam = model.beams[index]
+      updater(beam)
+    })
 }))
 
 module.exports = useModelStore
 
 // what about a happen for any uuid?
-function createBeamHappening (happen) {
+function createBeamHappening (set, happen) {
   return {
-    [`${happen}edBeamUuids`]: {},
-    [`${happen}Beam`]: uuid => state =>
-      console.log(happen, uuid) && {
-        [`${happen}edBeamUuids`]: Object.assign(
-          {},
-          state[`${happen}edBeamUuids`],
-          {
-            [uuid]: true
-          }
-        )
-      },
+    [`${happen}edUuids`]: {},
+    [`${happen}`]: uuid => {
+      return set(state => {
+        state[`${happen}edUuids`][uuid] = true
+      })
+    },
     //  hoverBeam: pipe(
     //    prop('hoveredBeamUuids'),
     //    assoc(uuid, true),
     //    assoc('hoveredBeamUuids', __, {})
     //  ),
-    [`${happen}Beams`]: uuids => state => ({
-      [`${happen}edBeamUuids`]: uuids
-    }),
-    [`un${happen}Beam`]: uuid => state => ({
-      [`${happen}edBeamUuids`]: Object.assign(
-        {},
-        state[`${happen}edBeamUuids`],
-        {
-          [uuid]: false
-        }
-      )
-    })
+    [`${happen}s`]: uuids => {
+      return set(state => {
+        var nextHappenedUuids = {}
+        uuids.forEach(uuid => {
+          nextHappenedUuids[uuid] = true
+        })
+        state[`${happen}edUuids`] = nextHappenedUuids
+      })
+    },
+    [`un${happen}`]: uuid =>
+      set(state => {
+        delete state[`${happen}edUuids`][uuid]
+      })
   }
 }

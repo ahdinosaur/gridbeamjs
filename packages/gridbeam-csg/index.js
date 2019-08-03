@@ -56,15 +56,16 @@ function GridBeam (csg, options = {}) {
 
   /* public */
 
-  function Beam ({ origin, direction, length }) {
-    var beam =
+  function Beam ({ origin, direction, length }, config) {
+    var Beam =
       direction === 'x'
-        ? xBeam(length)
+        ? xBeam
         : direction === 'y'
-          ? yBeam(length)
+          ? yBeam
           : direction === 'z'
-            ? zBeam(length)
+            ? zBeam
             : new Error(`beam: unexpected direction: ${direction}`)
+    var beam = Beam(length, config)
 
     beam = translate(beam, origin)
 
@@ -91,26 +92,29 @@ function GridBeam (csg, options = {}) {
     })
   }
 
-  function zBeam (length) {
-    var cube = CSG.roundedCube({
+  function zBeam (length, config) {
+    var { renderHoles } = config
+    var beam = CSG.roundedCube({
       center: [beamWidth / 2, beamWidth / 2, length * beamWidth / 2],
       radius: [beamWidth / 2, beamWidth / 2, length * beamWidth / 2]
     })
-    var holes = []
-    for (var i = 0; i < length; i++) {
-      holes.push(xHole(i))
-      holes.push(yHole(i))
+    if (renderHoles) {
+      var holes = []
+      for (var i = 0; i < length; i++) {
+        holes.push(xHole(i))
+        holes.push(yHole(i))
+      }
+      beam = beam.subtract(holes)
     }
-    var beam = cube.subtract(holes)
     return beam
   }
 
-  function yBeam (length) {
-    return translate(zBeam(length).rotateX(-90), [0, 0, 1])
+  function yBeam (length, config) {
+    return translate(zBeam(length, config).rotateX(-90), [0, 0, 1])
   }
 
-  function xBeam (length) {
-    return translate(zBeam(length).rotateY(90), [0, 0, 1])
+  function xBeam (length, config) {
+    return translate(zBeam(length, config).rotateY(90), [0, 0, 1])
   }
 
   function translate (beam, vector) {

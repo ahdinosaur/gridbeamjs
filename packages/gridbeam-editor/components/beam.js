@@ -1,10 +1,17 @@
 const React = require('react')
 const THREE = require('three')
 const csg = require('@jscad/csg')
-const { DEFAULT_BEAM_WIDTH } = require('gridbeam-csg')
-const GridBeamCsg = require('gridbeam-csg')(csg)
 const csgToMesh = require('csg-to-mesh')
 const { pipe, map, multiply } = require('ramda')
+
+const DEFAULT_BEAM_WIDTH = 10
+const DEFAULT_CYLINDER_RESOLUTION = 6
+const DEFAULT_HOLE_RADIUS = 2
+const GridBeamCsg = require('gridbeam-csg')(csg, {
+  cylinderResolution: DEFAULT_CYLINDER_RESOLUTION,
+  beamWidth: DEFAULT_BEAM_WIDTH,
+  holeRadius: DEFAULT_HOLE_RADIUS
+})
 
 const useCameraStore = require('../stores/camera').default
 
@@ -21,47 +28,56 @@ function Beam (props) {
   const mesh = React.useMemo(
     () => {
       const beam = {
-        direction: 'x',
+        direction: value.direction,
         length: value.length,
         origin: [0, 0, 0]
       }
       return beamToMesh(beam)
     },
-    [value.length]
+    [value.direction, value.length]
   )
 
   const position = React.useMemo(
-    () =>
-      pipe(map(multiply(DEFAULT_BEAM_WIDTH)), ary =>
-        new THREE.Vector3().fromArray(ary)
-      )(value.origin),
+    () => map(multiply(DEFAULT_BEAM_WIDTH))(value.origin),
     [value.origin]
   )
 
-  const handleMove = React.useCallback(ev => {
-    ev.stopPropagation()
-    if (ev.buttons > 0) {
-      // console.log('move', uuid)
-    }
-  }, [])
+  const handleMove = React.useCallback(
+    ev => {
+      ev.stopPropagation()
+      if (ev.buttons > 0) {
+        // console.log('move', uuid)
+      }
+    },
+    [uuid]
+  )
 
-  const handleHover = React.useCallback(ev => {
-    ev.stopPropagation()
-    // console.log('hover', uuid)
-    hover()
-  }, [])
+  const handleHover = React.useCallback(
+    ev => {
+      ev.stopPropagation()
+      // console.log('hover', uuid)
+      hover()
+    },
+    [uuid, hover]
+  )
 
-  const handleUnhover = React.useCallback(ev => {
-    ev.stopPropagation()
-    // console.log('unhover', uuid)
-    unhover()
-  }, [])
+  const handleUnhover = React.useCallback(
+    ev => {
+      ev.stopPropagation()
+      // console.log('unhover', uuid)
+      unhover()
+    },
+    [uuid, unhover]
+  )
 
-  const handleClick = React.useCallback(ev => {
-    ev.stopPropagation()
-    // console.log('click', uuid)
-    select()
-  }, [])
+  const handleClick = React.useCallback(
+    ev => {
+      ev.stopPropagation()
+      // console.log('click', uuid)
+      select()
+    },
+    [uuid, select]
+  )
 
   const color = React.useMemo(
     () => {
@@ -97,6 +113,6 @@ function Beam (props) {
 }
 
 function beamToMesh (beam) {
-  const csg = GridBeamCsg.Beam(beam)
+  const csg = GridBeamCsg.Beam(beam, { renderHoles: false })
   return csgToMesh(csg)
 }

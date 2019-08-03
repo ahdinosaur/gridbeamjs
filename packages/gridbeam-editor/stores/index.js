@@ -12,7 +12,7 @@ function log (config) {
     return config(nextSet, get, api)
 
     function nextSet (args) {
-      console.log('  applying', args)
+      // console.log('  applying', args)
       set(args)
       console.log('  new state', get())
     }

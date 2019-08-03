@@ -1,3 +1,7 @@
+- save as url
+  - WORKAROUND inability to create new beam
+- create new beam
+  - create example of dynamic cubes and raytracing
 - optimize 3d
   - rotate in threejs, not csg
   - pre-cache common sizes of geometry

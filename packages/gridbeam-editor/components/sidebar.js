@@ -26,30 +26,31 @@ function Sidebar (props) {
         <ControlSection key={uuid} title='selected beam'>
           <InputControl
             update={next => update(uuid, next)}
+            min={1}
             name='length'
             label='length'
-            value={selected.length}
+            defaultValue={selected.length}
             type='number'
           />
           <InputControl
             update={next => update(uuid, next)}
             name='origin[0]'
-            label='origin.y'
-            value={selected.origin[0]}
+            label='origin.x'
+            defaultValue={selected.origin[0]}
             type='number'
           />
           <InputControl
             update={next => update(uuid, next)}
             name='origin[1]'
             label='origin.y'
-            value={selected.origin[1]}
+            defaultValue={selected.origin[1]}
             type='number'
           />
           <InputControl
             update={next => update(uuid, next)}
             name='origin[2]'
             label='origin.z'
-            value={selected.origin[2]}
+            defaultValue={selected.origin[2]}
             type='number'
           />
         </ControlSection>
@@ -115,7 +116,7 @@ const ControlSection = props => {
 }
 
 const InputControl = props => {
-  const { name, path, label, value, update, ...inputProps } = props
+  const { name, path, label, update, ...inputProps } = props
 
   const handleChange = React.useCallback(ev => {
     update(object => {
@@ -126,13 +127,7 @@ const InputControl = props => {
   return (
     <ControlContainer>
       <label name={name}>{label}</label>
-      <input
-        name={name}
-        path={path}
-        value={value}
-        onChange={handleChange}
-        {...inputProps}
-      />
+      <input name={name} path={path} onBlur={handleChange} {...inputProps} />
     </ControlContainer>
   )
 }

@@ -14,6 +14,7 @@ function SimplicialComplexGeometry (props) {
       updateCells(geometry, cells, positions)
       geometry.computeFaceNormals()
       geometry.computeVertexNormals()
+      geometry.computeBoundingSphere()
     },
     [mesh]
   )

@@ -2,17 +2,20 @@ const THREE = require('three')
 const create = require('./').default
 const { map, zipObj } = require('ramda')
 
-const generateUuids = map(() => THREE.Math.generateUUID())
-
 const [useModelStore] = create(set => ({
   parts: {},
   setParts: parts =>
     set(state => {
-      const uuids = generateUuids(parts)
+      const uuids = parts.map(part => THREE.Math.generateUUID())
       state.parts = zipObj(uuids, parts)
     }),
   ...createBeamHappening(set, 'hover'),
   ...createBeamHappening(set, 'select'),
+  addPart: newPart =>
+    set(state => {
+      const uuid = THREE.Math.generateUUID()
+      state.parts[uuid] = newPart
+    }),
   update: (uuid, updater) => set(state => updater(state.parts[uuid]))
 }))
 

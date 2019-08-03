@@ -15,11 +15,13 @@ module.exports = withProvider(GridBeamEditor)
 
 function GridBeamEditor ({ initialParts }) {
   const setParts = useModelStore(prop('setParts'))
+
   React.useEffect(() => setParts(initialParts), [])
 
   return (
     <Container>
       <Sidebar />
+      <ActionButton />
       <Vis />
     </Container>
   )
@@ -34,3 +36,34 @@ const Container = styled.div({
   flexDirection: 'row',
   flexWrap: 'nowrap'
 })
+
+const { Button } = require('rebass')
+
+function ActionButton (props) {
+  const addPart = useModelStore(prop('addPart'))
+
+  return (
+    <Button
+      ml={3}
+      mb={3}
+      css={{
+        position: 'absolute',
+        left: 0,
+        bottom: 0,
+        zIndex: 1
+      }}
+      onClick={handleClick}
+    >
+      Add Beam
+    </Button>
+  )
+
+  function handleClick (ev) {
+    addPart({
+      type: 'beam',
+      direction: 'x',
+      length: 5,
+      origin: [0, 0, 0]
+    })
+  }
+}

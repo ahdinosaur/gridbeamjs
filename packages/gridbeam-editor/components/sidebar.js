@@ -24,6 +24,13 @@ function Sidebar (props) {
     () => {
       const renderBeam = (selected, uuid) => (
         <ControlSection key={uuid} title='selected beam'>
+          <SelectControl
+            update={next => update(uuid, next)}
+            name='direction'
+            label='direction'
+            options={['x', 'y', 'z']}
+            defaultValue={selected.direction}
+          />
           <InputControl
             update={next => update(uuid, next)}
             min={1}
@@ -116,7 +123,7 @@ const ControlSection = props => {
 }
 
 const InputControl = props => {
-  const { name, path, label, update, ...inputProps } = props
+  const { name, label, update, ...inputProps } = props
 
   const handleChange = React.useCallback(ev => {
     update(object => {
@@ -127,7 +134,34 @@ const InputControl = props => {
   return (
     <ControlContainer>
       <label name={name}>{label}</label>
-      <input name={name} path={path} onBlur={handleChange} {...inputProps} />
+      <input name={name} onBlur={handleChange} {...inputProps} />
+    </ControlContainer>
+  )
+}
+
+const SelectControl = props => {
+  const { name, label, options, update, ...selectProps } = props
+
+  const handleChange = React.useCallback(ev => {
+    update(object => {
+      set(object, name, ev.target.value)
+    })
+  }, [])
+
+  return (
+    <ControlContainer>
+      <label name={name}>{label}</label>
+      <select
+        name={name}
+        onBlur={handleChange}
+        {...selectProps}
+      >
+        {options.map(option => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
     </ControlContainer>
   )
 }

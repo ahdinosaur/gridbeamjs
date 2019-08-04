@@ -14,9 +14,26 @@ const Vis = require('./components/vis')
 module.exports = withProvider(GridBeamEditor)
 
 function GridBeamEditor ({ initialParts }) {
+  const parts = useModelStore(prop('parts'))
   const setParts = useModelStore(prop('setParts'))
+  const loadParts = useModelStore(prop('loadParts'))
+  const saveParts = useModelStore(prop('saveParts'))
 
-  React.useEffect(() => setParts(initialParts), [])
+  React.useEffect(
+    () => {
+      if (initialParts) setParts(initialParts)
+      else loadParts(setParts)
+    },
+    [initialParts]
+  )
+  React.useEffect(
+    () => {
+      if (parts != null) saveParts(parts)
+    },
+    [parts]
+  )
+
+  if (parts == null) return null
 
   return (
     <Container>

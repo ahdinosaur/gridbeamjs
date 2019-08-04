@@ -3,6 +3,9 @@ const ReactDom = require('react-dom')
 
 const GridBeamEditor = require('./')
 
+// http://localhost:9966/#W3sidHlwZSI6ImJlYW0iLCJkaXJlY3Rpb24iOiJ4Iiwib3JpZ2luIjpbMCwwLDBdLCJsZW5ndGgiOjJ9LHsidHlwZSI6ImJlYW0iLCJkaXJlY3Rpb24iOiJ5Iiwib3JpZ2luIjpbMCwwLDBdLCJsZW5ndGgiOjV9LHsidHlwZSI6ImJlYW0iLCJkaXJlY3Rpb24iOiJ6Iiwib3JpZ2luIjpbMCwwLDBdLCJsZW5ndGgiOjEwfV0%3D
+
+/*
 var initialParts = [
   {
     type: 'beam',
@@ -23,6 +26,7 @@ var initialParts = [
     length: 10
   }
 ]
+*/
 
 const element = document.createElement('main')
 document.body.appendChild(element)
@@ -42,4 +46,4 @@ sheet.insertRule(
   0
 )
 
-ReactDom.render(<GridBeamEditor initialParts={initialParts} />, element)
+ReactDom.render(<GridBeamEditor />, element)

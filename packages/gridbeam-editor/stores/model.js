@@ -1,9 +1,9 @@
 const THREE = require('three')
 const create = require('./').default
-const { map, zipObj } = require('ramda')
+const { map, values, zipObj } = require('ramda')
 
 const [useModelStore] = create(set => ({
-  parts: {},
+  parts: null,
   setParts: parts =>
     set(state => {
       const uuids = parts.map(part => THREE.Math.generateUUID())
@@ -16,7 +16,52 @@ const [useModelStore] = create(set => ({
       const uuid = THREE.Math.generateUUID()
       state.parts[uuid] = newPart
     }),
-  update: (uuid, updater) => set(state => updater(state.parts[uuid]))
+  update: (uuid, updater) => set(state => updater(state.parts[uuid])),
+  loadParts: setParts => {
+    const partsUriComponent = window.location.href.split('#')[1]
+    if (partsUriComponent == null) return
+
+    const partsBase64 = decodeURIComponent(partsUriComponent)
+
+    try {
+      var partsJson = window.atob(partsBase64)
+    } catch (err) {
+      throw new Error(
+        'gridbeam-editor/stores/parts: could not parse parts from Base64 in Url'
+      )
+    }
+
+    try {
+      var parts = JSON.parse(partsJson)
+    } catch (err) {
+      throw new Error(
+        'gridbeam-editor/stores/parts: could not parse parts from Json in Url'
+      )
+    }
+
+    return setParts(parts)
+  },
+  saveParts: parts => {
+    const partsOut = values(parts)
+
+    try {
+      var partsJson = JSON.stringify(partsOut)
+    } catch (err) {
+      throw new Error(
+        'gridbeam-editor/stores/parts: could not stringify Json parts'
+      )
+    }
+    try {
+      var partsBase64 = window.btoa(partsJson)
+    } catch (err) {
+      throw new Error(
+        'gridbeam-editor/stores/parts: could not stringify Base64 parts'
+      )
+    }
+
+    window.location.href =
+      window.location.href.split('#')[0] + '#' + encodeURIComponent(partsBase64)
+  }
 }))
 
 module.exports = useModelStore

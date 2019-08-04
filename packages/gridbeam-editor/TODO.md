@@ -1,7 +1,8 @@
-- save as url
-  - WORKAROUND inability to create new beam
-- create new beam
-  - create example of dynamic cubes and raytracing
+- store quality
+  - "renderer"?
+- click and drag to move
+- press r to rotate selected
+- press shift and select many
 - optimize 3d
   - rotate in threejs, not csg
   - pre-cache common sizes of geometry

@@ -46,7 +46,7 @@ function Beam (props) {
     ev => {
       ev.stopPropagation()
       if (ev.buttons > 0) {
-        // console.log('move', uuid)
+        console.log('move', uuid, ev)
       }
     },
     [uuid]

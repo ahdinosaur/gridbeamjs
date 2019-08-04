@@ -1,7 +1,7 @@
 const THREE = require('three')
 const create = require('./').default
 const base64url = require('base64-url')
-const { map, values, zipObj } = require('ramda')
+const { keys, map, values, zipObj } = require('ramda')
 
 const [useModelStore] = create(set => ({
   parts: null,
@@ -18,6 +18,19 @@ const [useModelStore] = create(set => ({
       state.parts[uuid] = newPart
     }),
   update: (uuid, updater) => set(state => updater(state.parts[uuid])),
+  updateSelected: updater =>
+    set(state => {
+      const { selectedUuids } = state
+      keys(selectedUuids).forEach(uuid => {
+        updater(state.parts[uuid])
+      })
+    }),
+  removeSelected: () => set(state => {
+    const { selectedUuids } = state
+    keys(selectedUuids).forEach(uuid => {
+      delete state.parts[uuid]
+    })
+  }),
   loadParts: setParts => {
     const partsUriComponent = window.location.href.split('#')[1]
     if (partsUriComponent == null) return

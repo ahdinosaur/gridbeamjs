@@ -1,5 +1,6 @@
 const THREE = require('three')
 const create = require('./').default
+const base64url = require('base64-url')
 const { map, values, zipObj } = require('ramda')
 
 const [useModelStore] = create(set => ({
@@ -24,7 +25,7 @@ const [useModelStore] = create(set => ({
     const partsBase64 = decodeURIComponent(partsUriComponent)
 
     try {
-      var partsJson = window.atob(partsBase64)
+      var partsJson = base64url.decode(partsBase64)
     } catch (err) {
       throw new Error(
         'gridbeam-editor/stores/parts: could not parse parts from Base64 in Url'
@@ -52,7 +53,7 @@ const [useModelStore] = create(set => ({
       )
     }
     try {
-      var partsBase64 = window.btoa(partsJson)
+      var partsBase64 = base64url.encode(partsJson)
     } catch (err) {
       throw new Error(
         'gridbeam-editor/stores/parts: could not stringify Base64 parts'

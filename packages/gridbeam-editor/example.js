@@ -3,29 +3,8 @@ const ReactDom = require('react-dom')
 
 const GridBeamEditor = require('./')
 
-// http://localhost:9966/#W3sidHlwZSI6ImJlYW0iLCJkaXJlY3Rpb24iOiJ4Iiwib3JpZ2luIjpbMCwwLDBdLCJsZW5ndGgiOjJ9LHsidHlwZSI6ImJlYW0iLCJkaXJlY3Rpb24iOiJ5Iiwib3JpZ2luIjpbMCwwLDBdLCJsZW5ndGgiOjV9LHsidHlwZSI6ImJlYW0iLCJkaXJlY3Rpb24iOiJ6Iiwib3JpZ2luIjpbMCwwLDBdLCJsZW5ndGgiOjEwfV0%3D
-
 /*
-var initialParts = [
-  {
-    type: 'beam',
-    direction: 'x',
-    origin: [0, 0, 0],
-    length: 2
-  },
-  {
-    type: 'beam',
-    direction: 'y',
-    origin: [0, 0, 0],
-    length: 5
-  },
-  {
-    type: 'beam',
-    direction: 'z',
-    origin: [0, 0, 0],
-    length: 10
-  }
-]
+http://localhost:9966/#W3sidHlwZSI6ImJlYW0iLCJkaXJlY3Rpb24iOiJ4Iiwib3JpZ2luIjpbMCwwLDBdLCJsZW5ndGgiOjJ9LHsidHlwZSI6ImJlYW0iLCJkaXJlY3Rpb24iOiJ5Iiwib3JpZ2luIjpbMCwwLDBdLCJsZW5ndGgiOjV9LHsidHlwZSI6ImJlYW0iLCJkaXJlY3Rpb24iOiJ6Iiwib3JpZ2luIjpbNiwwLDVdLCJsZW5ndGgiOjE0fSx7InR5cGUiOiJiZWFtIiwiZGlyZWN0aW9uIjoieCIsImxlbmd0aCI6NSwib3JpZ2luIjpbMywwLDRdfSx7InR5cGUiOiJiZWFtIiwiZGlyZWN0aW9uIjoieCIsImxlbmd0aCI6NSwib3JpZ2luIjpbMCwzLDNdfSx7InR5cGUiOiJiZWFtIiwiZGlyZWN0aW9uIjoieCIsImxlbmd0aCI6NSwib3JpZ2luIjpbMCwwLDddfV0
 */
 
 const element = document.createElement('main')

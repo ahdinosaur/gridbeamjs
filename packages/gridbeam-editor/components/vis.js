@@ -1,4 +1,5 @@
 const React = require('react')
+const THREE = require('three')
 const { Canvas } = require('react-three-fiber')
 const { DEFAULT_BEAM_WIDTH } = require('gridbeam-csg')
 const { mapObjIndexed, pipe, prop, values } = require('ramda')
@@ -17,6 +18,7 @@ function Vis (props) {
   const unhover = useModelStore(prop('unhover'))
   const selectedUuids = useModelStore(prop('selectedUuids'))
   const selects = useModelStore(prop('selects'))
+  const update = useModelStore(prop('update'))
 
   const renderParts = React.useMemo(
     () =>
@@ -33,6 +35,11 @@ function Vis (props) {
               unhover={() => unhover(uuid)}
               isSelected={Boolean(uuid in selectedUuids)}
               select={() => selects([uuid])}
+              move={origin =>
+                update(uuid, part => {
+                  part.origin = origin
+                })
+              }
             />
           )
         }),

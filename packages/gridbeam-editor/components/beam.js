@@ -2,15 +2,15 @@ const React = require('react')
 const THREE = require('three')
 const csg = require('@jscad/csg')
 const csgToMesh = require('csg-to-mesh')
-const { pipe, map, multiply } = require('ramda')
+const { pipe, map, multiply, divide } = require('ramda')
 
-const DEFAULT_BEAM_WIDTH = 10
-const DEFAULT_CYLINDER_RESOLUTION = 6
-const DEFAULT_HOLE_RADIUS = 2
+const BEAM_WIDTH = 10
+const CYLINDER_RESOLUTION = 6
+const HOLE_RADIUS = 2
 const GridBeamCsg = require('gridbeam-csg')(csg, {
-  cylinderResolution: DEFAULT_CYLINDER_RESOLUTION,
-  beamWidth: DEFAULT_BEAM_WIDTH,
-  holeRadius: DEFAULT_HOLE_RADIUS
+  cylinderResolution: CYLINDER_RESOLUTION,
+  beamWidth: BEAM_WIDTH,
+  holeRadius: HOLE_RADIUS
 })
 
 const useCameraStore = require('../stores/camera').default
@@ -20,7 +20,16 @@ const Complex = require('./complex')
 module.exports = Beam
 
 function Beam (props) {
-  const { uuid, value, isHovered, hover, unhover, isSelected, select } = props
+  const {
+    uuid,
+    value,
+    isHovered,
+    hover,
+    unhover,
+    isSelected,
+    select,
+    move
+  } = props
 
   const enableCameraControl = useCameraStore(state => state.enableControl)
   const disableCameraControl = useCameraStore(state => state.disableControl)
@@ -38,18 +47,61 @@ function Beam (props) {
   )
 
   const position = React.useMemo(
-    () => map(multiply(DEFAULT_BEAM_WIDTH))(value.origin),
+    () => map(multiply(BEAM_WIDTH))(value.origin),
     [value.origin]
   )
 
+  const [originAtMoveStart, setOriginAtMoveStart] = React.useState(null)
   const handleMove = React.useCallback(
     ev => {
       ev.stopPropagation()
       if (ev.buttons > 0) {
-        console.log('move', uuid, ev)
+        if (originAtMoveStart == null) {
+          setOriginAtMoveStart(value.origin)
+          return
+        }
+
+        const pointAtMoveStart = ev.point
+        var intersectionPoint = new THREE.Vector3()
+        var movementVector
+
+        if (ev.shiftKey) {
+          // TODO is this correct?
+          const verticalPlane = new THREE.Plane(
+            new THREE.Vector3(1, 0, 0),
+            -ev.point.x
+          )
+          ev.ray.intersectPlane(verticalPlane, intersectionPoint)
+          movementVector = new THREE.Vector3(
+            0,
+            intersectionPoint.y - pointAtMoveStart.y,
+            0
+          )
+        } else {
+          const horizontalPlane = new THREE.Plane(
+            new THREE.Vector3(0, 1, 0),
+            -ev.point.y
+          )
+          ev.ray.intersectPlane(horizontalPlane, intersectionPoint)
+          movementVector = new THREE.Vector3()
+            .copy(intersectionPoint)
+            .sub(pointAtMoveStart)
+        }
+
+        const beamMovementVector = new THREE.Vector3()
+          .copy(movementVector)
+          .divideScalar(BEAM_WIDTH)
+          .round()
+
+        const nextOrigin = new THREE.Vector3()
+          .fromArray(originAtMoveStart)
+          .add(beamMovementVector)
+          .toArray()
+
+        move(nextOrigin)
       }
     },
-    [uuid]
+    [uuid, value, originAtMoveStart]
   )
 
   const handleHover = React.useCallback(
@@ -101,6 +153,7 @@ function Beam (props) {
         ev.stopPropagation()
         ev.target.releasePointerCapture(ev.pointerId)
         enableCameraControl()
+        setOriginAtMoveStart(null)
       }}
       onPointerMove={handleMove}
       onPointerOver={handleHover}

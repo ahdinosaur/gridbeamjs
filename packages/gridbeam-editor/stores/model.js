@@ -1,10 +1,18 @@
 const THREE = require('three')
 const create = require('./').default
-const base64url = require('base64-url')
-const { keys, map, values, zipObj } = require('ramda')
+const {
+  compressToEncodedURIComponent,
+  decompressFromEncodedURIComponent
+} = require('lz-string')
+const { keys, values, zipObj } = require('ramda')
 
 const [useModelStore] = create(set => ({
   parts: null,
+  isLoaded: false,
+  setLoaded: isLoaded =>
+    set(state => {
+      state.isLoaded = isLoaded
+    }),
   setParts: parts =>
     set(state => {
       const uuids = parts.map(part => THREE.Math.generateUUID())
@@ -25,20 +33,21 @@ const [useModelStore] = create(set => ({
         updater(state.parts[uuid])
       })
     }),
-  removeSelected: () => set(state => {
-    const { selectedUuids } = state
-    keys(selectedUuids).forEach(uuid => {
-      delete state.parts[uuid]
-    })
-  }),
-  loadParts: setParts => {
+  removeSelected: () =>
+    set(state => {
+      const { selectedUuids } = state
+      keys(selectedUuids).forEach(uuid => {
+        delete state.parts[uuid]
+      })
+    }),
+  loadParts: (setParts, setLoaded) => {
+    setLoaded(true)
+
     const partsUriComponent = window.location.href.split('#')[1]
     if (partsUriComponent == null) return
 
-    const partsBase64 = decodeURIComponent(partsUriComponent)
-
     try {
-      var partsJson = base64url.decode(partsBase64)
+      var partsJson = decompressFromEncodedURIComponent(partsUriComponent)
     } catch (err) {
       throw new Error(
         'gridbeam-editor/stores/parts: could not parse parts from Base64 in Url'
@@ -66,7 +75,7 @@ const [useModelStore] = create(set => ({
       )
     }
     try {
-      var partsBase64 = base64url.encode(partsJson)
+      var partsBase64 = compressToEncodedURIComponent(partsJson)
     } catch (err) {
       throw new Error(
         'gridbeam-editor/stores/parts: could not stringify Base64 parts'
@@ -74,7 +83,7 @@ const [useModelStore] = create(set => ({
     }
 
     window.location.href =
-      window.location.href.split('#')[0] + '#' + encodeURIComponent(partsBase64)
+      window.location.href.split('#')[0] + '#' + partsBase64
   }
 }))
 

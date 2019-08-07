@@ -1,5 +1,5 @@
 const React = require('react')
-const { Box, Flex, Text } = require('rebass')
+const { Box, Flex, Text, Button } = require('rebass')
 const Group = require('reakit/Group').default
 const { default: styled } = require('styled-components')
 const { set } = require('lodash')
@@ -20,10 +20,20 @@ function Sidebar (props) {
     selectedUuids
   ])
 
+  const [isOpen, setIsOpen] = React.useState(false)
+  React.useEffect(
+    () => {
+      const nextIsOpen = Object.keys(selectedUuids).length > 0
+      setIsOpen(nextIsOpen)
+    },
+    [selectedUuids]
+  )
+  const handleClose = React.useCallback(() => setIsOpen(false))
+
   const renderPart = React.useMemo(
     () => {
       const renderBeam = (selected, uuid) => (
-        <ControlSection key={uuid} title='selected beam'>
+        <ControlSection key={uuid} title='beam'>
           <SelectControl
             update={next => update(uuid, next)}
             name='direction'
@@ -79,11 +89,11 @@ function Sidebar (props) {
     pipe(mapObjIndexed(renderPart), values)
   )
 
-  if (Object.keys(selectedUuids).length === 0) return null
+  if (!isOpen) return null
 
   return (
     <SidebarContainer>
-      {JSON.stringify(selectedParts, null, 2)}
+      <CloseButton handleClose={handleClose} />
       {renderSelectedParts(selectedParts)}
     </SidebarContainer>
   )
@@ -151,11 +161,7 @@ const SelectControl = props => {
   return (
     <ControlContainer>
       <label name={name}>{label}</label>
-      <select
-        name={name}
-        onBlur={handleChange}
-        {...selectProps}
-      >
+      <select name={name} onBlur={handleChange} {...selectProps}>
         {options.map(option => (
           <option key={option} value={option}>
             {option}
@@ -167,3 +173,12 @@ const SelectControl = props => {
 }
 
 const ControlContainer = props => <Box {...props} />
+
+const CloseButton = props => {
+  const { handleClose } = props
+  return (
+    <Button onClick={handleClose} bg='green'>
+      Close
+    </Button>
+  )
+}

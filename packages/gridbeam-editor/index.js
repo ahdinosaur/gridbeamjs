@@ -9,6 +9,7 @@ const useModelStore = require('./stores/model')
 
 const { withProvider } = require('./components/provider')
 const Sidebar = require('./components/sidebar')
+const ActionButton = require('./components/action')
 const Vis = require('./components/vis')
 const Keyboard = require('./components/keyboard')
 
@@ -52,34 +53,3 @@ const Container = styled.div({
   flexDirection: 'row',
   flexWrap: 'nowrap'
 })
-
-const { Button } = require('rebass')
-
-function ActionButton (props) {
-  const addPart = useModelStore(prop('addPart'))
-
-  return (
-    <Button
-      ml={3}
-      mb={3}
-      css={{
-        position: 'absolute',
-        left: 0,
-        bottom: 0,
-        zIndex: 1
-      }}
-      onClick={handleClick}
-    >
-      Add Beam
-    </Button>
-  )
-
-  function handleClick (ev) {
-    addPart({
-      type: 'beam',
-      direction: 'x',
-      length: 5,
-      origin: [0, 0, 0]
-    })
-  }
-}

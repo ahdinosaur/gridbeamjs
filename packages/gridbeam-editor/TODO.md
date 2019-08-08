@@ -1,7 +1,8 @@
 - store quality
   - "renderer"?
+- move all selected
 - bug: unlengthen < 0
-- undo and redo
+- undo and redo (back button)
 - optimize 3d
   - rotate in threejs, not csg
   - pre-cache common sizes of geometry

@@ -1,6 +1,6 @@
 const React = require('react')
 const THREE = require('three')
-const { useRender } = require('react-three-fiber')
+const { useThree } = require('react-three-fiber')
 const { Box } = require('rebass')
 const { prop, forEach } = require('ramda')
 const produce = require('immer').default
@@ -30,13 +30,14 @@ function SelectionBox (props) {
   )
   const selects = useModelStore(prop('selects'))
 
-  useRender(
-    ({ scene, camera }) => {
+  const { scene, camera } = useThree()
+  // this optimization works because the camera doesn't move once selecting
+  React.useEffect(
+    () => {
       if (isSelecting) {
         updateSelectableScreenBounds({ scene, camera })
       }
     },
-    false,
     [isSelecting]
   )
 

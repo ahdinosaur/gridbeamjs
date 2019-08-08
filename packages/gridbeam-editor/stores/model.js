@@ -98,18 +98,22 @@ function createBeamHappening (set, happen) {
         state[`${happen}edUuids`][uuid] = true
       })
     },
-    //  hoverBeam: pipe(
-    //    prop('hoveredBeamUuids'),
-    //    assoc(uuid, true),
-    //    assoc('hoveredBeamUuids', __, {})
-    //  ),
     [`${happen}s`]: uuids => {
       return set(state => {
-        var nextHappenedUuids = {}
-        uuids.forEach(uuid => {
-          nextHappenedUuids[uuid] = true
+        var happenedUuidsObject = state[`${happen}edUuids`]
+        var happenedUuids = Object.keys(happenedUuidsObject)
+        // remove any uuids no longer happening
+        happenedUuids.forEach(uuid => {
+          if (!uuids.includes(uuid)) {
+            delete happenedUuidsObject[uuid]
+          }
         })
-        state[`${happen}edUuids`] = nextHappenedUuids
+        // add any uuids that started happening
+        uuids.forEach(uuid => {
+          if (!happenedUuids.includes(uuid)) {
+            happenedUuidsObject[uuid] = true
+          }
+        })
       })
     },
     [`un${happen}`]: uuid =>

@@ -57,6 +57,7 @@ function Beam (props) {
       ev.stopPropagation()
       if (ev.buttons > 0) {
         if (originAtMoveStart == null) {
+          select()
           setOriginAtMoveStart(value.origin)
           return
         }
@@ -96,9 +97,12 @@ function Beam (props) {
         const nextOrigin = new THREE.Vector3()
           .fromArray(originAtMoveStart)
           .add(beamMovementVector)
-          .toArray()
 
-        move(nextOrigin)
+        const delta = new THREE.Vector3()
+          .copy(nextOrigin)
+          .sub(new THREE.Vector3().fromArray(value.origin))
+
+        move(delta.toArray())
       }
     },
     [uuid, value, originAtMoveStart]

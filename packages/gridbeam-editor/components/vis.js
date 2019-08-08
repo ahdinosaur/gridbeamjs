@@ -19,7 +19,7 @@ function Vis (props) {
   const unhover = useModelStore(prop('unhover'))
   const selectedUuids = useModelStore(prop('selectedUuids'))
   const selects = useModelStore(prop('selects'))
-  const update = useModelStore(prop('update'))
+  const updateSelected = useModelStore(prop('updateSelected'))
 
   const renderParts = React.useMemo(
     () =>
@@ -36,9 +36,11 @@ function Vis (props) {
               unhover={() => unhover(uuid)}
               isSelected={Boolean(uuid in selectedUuids)}
               select={() => selects([uuid])}
-              move={origin =>
-                update(uuid, part => {
-                  part.origin = origin
+              move={delta =>
+                updateSelected(part => {
+                  part.origin[0] += delta[0]
+                  part.origin[1] += delta[1]
+                  part.origin[2] += delta[2]
                 })
               }
             />

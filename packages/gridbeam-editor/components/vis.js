@@ -50,7 +50,12 @@ function Vis (props) {
   )
 
   return (
-    <Canvas orthographic>
+    <Canvas
+      orthographic
+      onPointerMissed={() => {
+        selects([])
+      }}
+    >
       <hemisphereLight args={[0xffffbb, 0x080820]} />
       <Camera />
       <Selector />

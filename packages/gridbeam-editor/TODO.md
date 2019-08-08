@@ -1,6 +1,5 @@
 - store quality
   - "renderer"?
-- press shift and select many
 - bug: unlengthen < 0
 - undo and redo
 - optimize 3d

@@ -645,7 +645,9 @@ THREE.OrbitControls = function (object, domElement) {
 
     switch (event.button) {
       case scope.mouseButtons.LEFT:
-        if (event.ctrlKey || event.metaKey || event.shiftKey) {
+        // if (event.ctrlKey || event.metaKey || event.shiftKey) {
+        if (event.shiftKey) return
+        else if (event.ctrlKey || event.metaKey) {
           if (scope.enablePan === false) return
 
           handleMouseDownPan(event)

@@ -1,8 +1,8 @@
 - store quality
   - "renderer"?
-- click and drag to move
-- press r to rotate selected
 - press shift and select many
+- bug: unlengthen < 0
+- undo and redo
 - optimize 3d
   - rotate in threejs, not csg
   - pre-cache common sizes of geometry

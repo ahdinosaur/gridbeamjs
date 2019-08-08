@@ -1,101 +1,101 @@
 const React = require('react')
+// const THREE = require('three')
 const { useThree } = require('react-three-fiber')
-const { createGlobalStyle } = require('styled-components')
-
-const SelectionBox = require('../vendor/SelectionBox')
-const SelectionHelper = require('../vendor/SelectionHelper')
-
-const GlobalSelectionStyle = createGlobalStyle`
-  .selectBox {
-    border: 1px solid #55aaff;
-    background-color: rgba(75, 160, 255, 0.3);
-    position: fixed;
-  }
-`
+const { Box } = require('rebass')
 
 module.exports = Selection
 
 function Selection (props) {
-  const { gl, camera, scene } = useThree()
+  //  const { gl, camera, scene } = useThree()
 
-  const selectionBox = React.useMemo(
-    () => {
-      console.log('selectionBox')
-      return new SelectionBox(camera, scene)
-    },
-    [camera, scene]
-  )
-  const selectionHelper = React.useMemo(
-    () => {
-      console.log('selectionHelper', gl)
-      return new SelectionHelper(selectionBox, gl, 'selectBox')
-    },
-    [selectionBox, gl]
-  )
+  const [isDown, setIsDown] = React.useState(false)
+  const [startPoint, setStartPoint] = React.useState({ x: 0, y: 0 })
+  const [endPoint, setEndPoint] = React.useState({ x: 0, y: 0 })
 
   React.useEffect(() => {
-    var isDown = false
-
-    document.addEventListener('mousedown', handleDown)
-    document.addEventListener('mousemove', handleMove)
-    document.addEventListener('mouseup', handleUp)
+    document.addEventListener('keyup', handleKeyUp)
+    document.addEventListener('mousedown', handleMouseDown)
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
 
     return () => {
-      document.removeEventListener('mousedown', handleDown)
-      document.removeEventListener('mousemove', handleMove)
-      document.removeEventListener('mouseup', handleUp)
+      document.removeEventListener('keyup', handleKeyUp)
+      document.removeEventListener('mousedown', handleMouseDown)
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
     }
 
-    function handleDown (ev) {
+    function handleMouseDown (ev) {
       if (!ev.shiftKey) return
-      isDown = true
-      start(ev)
+      setIsDown(true)
+      handleStart(ev)
     }
-    function handleMove (ev) {
-      if (isDown) {
-        if (ev.shiftKey) {
-          between(ev)
-        } else {
-          isDown = false
-          end(ev)
-        }
+    function handleMouseMove (ev) {
+      handleEnd(ev)
+    }
+    function handleMouseUp (ev) {
+      setIsDown(false)
+      handleEnd(ev)
+    }
+    function handleKeyUp (ev) {
+      console.log('ev.keyCode', ev.keyCode)
+      if (ev.keyCode === 'ShiftKey') {
+        setIsDown(false)
       }
     }
-    function handleUp (ev) {
-      if (ev.shiftKey) {
-        isDown = false
-        end(ev)
-      }
-    }
-    function start (ev) {
+
+    function handleStart (ev) {
       console.log('start')
-      selectionBox.startPoint.set(
-        ev.clientX / window.innerWidth * 2 - 1,
-        -(ev.clientY / window.innerHeight) * 2 + 1,
-        0.5
-      )
+      setStartPoint({
+        x: ev.clientX / window.innerWidth * 2 - 1,
+        y: -(ev.clientY / window.innerHeight) * 2 + 1
+      })
     }
-    function between (ev) {
+    function handleEnd (ev) {
       console.log('between')
-      selectionBox.endPoint.set(
-        ev.clientX / window.innerWidth * 2 - 1,
-        -(ev.clientY / window.innerHeight) * 2 + 1,
-        0.5
-      )
-      const selected = selectionBox.select()
-      console.log('selected', selected)
-    }
-    function end (ev) {
-      console.log('end')
-      selectionBox.endPoint.set(
-        ev.clientX / window.innerWidth * 2 - 1,
-        -(ev.clientY / window.innerHeight) * 2 + 1,
-        0.5
-      )
-      const selected = selectionBox.select()
-      console.log('selected', selected)
+      setEndPoint({
+        x: ev.clientX / window.innerWidth * 2 - 1,
+        y: -(ev.clientY / window.innerHeight) * 2 + 1
+      })
     }
   }, [])
 
-  return <GlobalSelectionStyle />
+  return isDown && <SelectBox startPoint={startPoint} endPoint={endPoint} />
+}
+
+function SelectBox (props) {
+  const { startPoint, endPoint } = props
+
+  const bottomRightPoint = React.useMemo(
+    () => ({
+      x: Math.max(startPoint.x, endPoint.x),
+      y: Math.max(startPoint.y, endPoint.y)
+    }),
+    [startPoint, endPoint]
+  )
+
+  const topLeftPoint = React.useMemo(
+    () => ({
+      x: Math.min(startPoint.x, endPoint.x),
+      y: Math.min(startPoint.y, endPoint.y)
+    }),
+    [startPoint, endPoint]
+  )
+
+  return (
+    <Box
+      css={{
+        pointerEvents: 'none',
+        border: '1px solid #55aaff',
+        backgroundColor: 'rgba(75, 160, 255, 0.3)',
+        position: 'fixed'
+      }}
+      style={{
+        left: topLeftPoint.x,
+        top: topLeftPoint.y,
+        width: bottomRightPoint.x - topLeftPoint.x,
+        height: bottomRightPoint.y - topLeftPoint.y
+      }}
+    />
+  )
 }

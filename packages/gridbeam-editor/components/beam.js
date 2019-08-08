@@ -1,9 +1,8 @@
 const React = require('react')
 const THREE = require('three')
-const { useThree } = require('react-three-fiber')
 const csg = require('@jscad/csg')
 const csgToMesh = require('csg-to-mesh')
-const { prop, pipe, map, multiply, divide } = require('ramda')
+const { map, multiply } = require('ramda')
 
 const BEAM_WIDTH = 10
 const CYLINDER_RESOLUTION = 6
@@ -15,7 +14,6 @@ const GridBeamCsg = require('gridbeam-csg')(csg, {
 })
 
 const useCameraStore = require('../stores/camera').default
-const useSelectionStore = require('../stores/selection')
 
 const Complex = require('./complex')
 
@@ -32,11 +30,6 @@ function Beam (props) {
     select,
     move
   } = props
-
-  const { camera } = useThree()
-  const updateSelectableScreenBounds = useSelectionStore(
-    prop('updateSelectableScreenBounds')
-  )
 
   const enableCameraControl = useCameraStore(state => state.enableControl)
   const disableCameraControl = useCameraStore(state => state.disableControl)
@@ -165,9 +158,6 @@ function Beam (props) {
       onPointerMove={handleMove}
       onPointerOver={handleHover}
       onPointerOut={handleUnhover}
-      onUpdate={self => {
-        updateSelectableScreenBounds(self, camera)
-      }}
     >
       <Complex mesh={mesh} attach='geometry' />
       <meshLambertMaterial attach='material' color={color} />

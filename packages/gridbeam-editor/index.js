@@ -37,7 +37,7 @@ function GridBeamEditor ({ defaultParts }) {
 
   return (
     <Container>
-      <Sidebar />
+      {/* <Sidebar /> */}
       <ActionButton />
       <SelectionBox />
       <Vis />

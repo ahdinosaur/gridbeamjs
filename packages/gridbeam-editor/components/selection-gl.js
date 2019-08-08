@@ -1,6 +1,6 @@
 const React = require('react')
 const THREE = require('three')
-const { useThree } = require('react-three-fiber')
+const { useRender } = require('react-three-fiber')
 const { Box } = require('rebass')
 const { prop, forEach } = require('ramda')
 const produce = require('immer').default
@@ -25,7 +25,20 @@ function SelectionBox (props) {
   const selectableScreenBounds = useSelectionStore(
     prop('selectableScreenBounds')
   )
-  const select = useModelStore(prop('select'))
+  const updateSelectableScreenBounds = useSelectionStore(
+    prop('updateSelectableScreenBounds')
+  )
+  const selects = useModelStore(prop('selects'))
+
+  useRender(
+    ({ scene, camera }) => {
+      if (isSelecting) {
+        updateSelectableScreenBounds({ scene, camera })
+      }
+    },
+    false,
+    [isSelecting]
+  )
 
   const selectionScreenBounds = React.useMemo(
     () => {
@@ -41,13 +54,15 @@ function SelectionBox (props) {
   React.useEffect(
     () => {
       if (isSelecting) {
+        var selections = []
         Object.entries(selectableScreenBounds).forEach(
           ([uuid, selectableBox]) => {
             if (selectionScreenBounds.containsBox(selectableBox)) {
-              select(uuid)
+              selections.push(uuid)
             }
           }
         )
+        selects(selections)
       }
     },
     [isSelecting, selectionScreenBounds, selectableScreenBounds]

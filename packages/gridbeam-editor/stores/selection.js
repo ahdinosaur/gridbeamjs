@@ -26,18 +26,34 @@ const [useSelectionStore] = create(set => ({
       state.endPoint.y = y
     }),
   selectableScreenBounds: {},
-  updateSelectableScreenBounds: (mesh, camera) =>
+  updateSelectableScreenBounds: ({ scene, camera }) =>
     set(state => {
-      state.selectableScreenBounds[mesh.uuid] = computeScreenBounds(
-        mesh,
-        camera
-      )
+      forEachMesh(scene, mesh => {
+        state.selectableScreenBounds[mesh.uuid] = computeScreenBounds({
+          mesh,
+          camera
+        })
+      })
     })
 }))
 
 module.exports = useSelectionStore
 
-function computeScreenBounds (mesh, camera) {
+function forEachMesh (object, fn) {
+  if (object.isMesh) {
+    if (object.geometry !== undefined) {
+      fn(object)
+    }
+  }
+
+  if (object.children.length > 0) {
+    for (var i = 0; i < object.children.length; i++) {
+      forEachMesh(object.children[i], fn)
+    }
+  }
+}
+
+function computeScreenBounds ({ mesh, camera }) {
   var vertices = mesh.geometry.vertices
   var vertex = new THREE.Vector3()
   var min = new THREE.Vector3(1, 1, 1)

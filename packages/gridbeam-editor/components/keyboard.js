@@ -40,11 +40,9 @@ function Keyboard (props) {
         var keyCode = ev.code
         if (ev.shiftKey) keyCode = `Shift_${keyCode}`
         const command = keyCodes[mode][keyCode]
-        console.log('code', keyCode)
         if (command == null) return
         const action = commands[command]
         if (action == null) return
-        console.log('action', action)
         const [actionName, ...actionArgs] = action
         if (actionName.endsWith('Selected') && selectedUuids.length === 0) {
           return

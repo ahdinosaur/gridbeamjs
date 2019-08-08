@@ -126,10 +126,3 @@ var SelectionBox = (function () {
 
 module.exports = SelectionBox
 
-// - for each mesh, generate 2d screen box
-//   - https://stackoverflow.com/a/45879073
-// - generate selected bounds
-//   - startPoint and Box2.expandByPoint(endPoint)
-// - if selected bounds includes mesh box, it's in
-//   - Box2.containsBox
-//

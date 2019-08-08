@@ -1,16 +1,19 @@
 const React = require('react')
-// const THREE = require('three')
-const { useThree } = require('react-three-fiber')
 const { Box } = require('rebass')
+const { prop } = require('ramda')
 
-module.exports = Selection
+const useSelectionStore = require('../stores/selection')
 
-function Selection (props) {
-  //  const { gl, camera, scene } = useThree()
+module.exports = SelectionBox
 
-  const [isDown, setIsDown] = React.useState(false)
-  const [startPoint, setStartPoint] = React.useState({ x: 0, y: 0 })
-  const [endPoint, setEndPoint] = React.useState({ x: 0, y: 0 })
+function SelectionBox (props) {
+  const isSelecting = useSelectionStore(prop('isSelecting'))
+  const startSelection = useSelectionStore(prop('startSelection'))
+  const endSelection = useSelectionStore(prop('endSelection'))
+  const startPoint = useSelectionStore(prop('startPoint'))
+  const endPoint = useSelectionStore(prop('endPoint'))
+  const setStartPoint = useSelectionStore(prop('setStartPoint'))
+  const setEndPoint = useSelectionStore(prop('setEndPoint'))
 
   React.useEffect(() => {
     document.addEventListener('keyup', handleKeyUp)
@@ -27,32 +30,32 @@ function Selection (props) {
 
     function handleMouseDown (ev) {
       if (!ev.shiftKey) return
-      setIsDown(true)
+      startSelection()
       handleStart(ev)
     }
+
     function handleMouseMove (ev) {
       handleEnd(ev)
     }
+
     function handleMouseUp (ev) {
-      setIsDown(false)
+      endSelection()
       handleEnd(ev)
     }
+
     function handleKeyUp (ev) {
-      console.log('ev.keyCode', ev.keyCode)
-      if (ev.keyCode === 'ShiftKey') {
-        setIsDown(false)
+      if (ev.code === 'ShiftLeft') {
+        endSelection()
       }
     }
 
     function handleStart (ev) {
-      console.log('start')
       setStartPoint({
         x: ev.clientX / window.innerWidth * 2 - 1,
         y: -(ev.clientY / window.innerHeight) * 2 + 1
       })
     }
     function handleEnd (ev) {
-      console.log('between')
       setEndPoint({
         x: ev.clientX / window.innerWidth * 2 - 1,
         y: -(ev.clientY / window.innerHeight) * 2 + 1
@@ -60,7 +63,9 @@ function Selection (props) {
     }
   }, [])
 
-  return isDown && <SelectBox startPoint={startPoint} endPoint={endPoint} />
+  return (
+    isSelecting && <SelectBox startPoint={startPoint} endPoint={endPoint} />
+  )
 }
 
 function SelectBox (props) {
@@ -68,16 +73,16 @@ function SelectBox (props) {
 
   const bottomRightPoint = React.useMemo(
     () => ({
-      x: Math.max(startPoint.x, endPoint.x),
-      y: Math.max(startPoint.y, endPoint.y)
+      x: (Math.max(startPoint.x, endPoint.x) + 1) / 2 * window.innerWidth,
+      y: -(Math.min(startPoint.y, endPoint.y) - 1) / 2 * window.innerHeight
     }),
     [startPoint, endPoint]
   )
 
   const topLeftPoint = React.useMemo(
     () => ({
-      x: Math.min(startPoint.x, endPoint.x),
-      y: Math.min(startPoint.y, endPoint.y)
+      x: (Math.min(startPoint.x, endPoint.x) + 1) / 2 * window.innerWidth,
+      y: -(Math.max(startPoint.y, endPoint.y) - 1) / 2 * window.innerHeight
     }),
     [startPoint, endPoint]
   )

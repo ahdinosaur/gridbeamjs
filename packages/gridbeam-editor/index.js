@@ -10,6 +10,7 @@ const useModelStore = require('./stores/model')
 const { withProvider } = require('./components/provider')
 const Sidebar = require('./components/sidebar')
 const ActionButton = require('./components/action')
+const SelectionBox = require('./components/selection-box')
 const Vis = require('./components/vis')
 const Keyboard = require('./components/keyboard')
 
@@ -38,6 +39,7 @@ function GridBeamEditor ({ defaultParts }) {
     <Container>
       <Sidebar />
       <ActionButton />
+      <SelectionBox />
       <Vis />
       <Keyboard />
     </Container>

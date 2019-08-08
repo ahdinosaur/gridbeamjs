@@ -8,7 +8,7 @@ const useModelStore = require('../stores/model')
 
 const Beam = require('./beam')
 const Camera = require('./camera')
-const Selection = require('./selection')
+// const Selection = require('./selection')
 
 module.exports = Vis
 
@@ -53,7 +53,7 @@ function Vis (props) {
     <Canvas orthographic>
       <hemisphereLight args={[0xffffbb, 0x080820]} />
       <Camera />
-      <Selection />
+      {/*<Selection />*/}
       <axesHelper args={[1000]} />
       <gridHelper args={[1000, 1000 / DEFAULT_BEAM_WIDTH]} />
       {renderParts(parts)}

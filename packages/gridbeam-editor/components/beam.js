@@ -2,7 +2,7 @@ const React = require('react')
 const THREE = require('three')
 const csg = require('@jscad/csg')
 const csgToMesh = require('csg-to-mesh')
-const { map, multiply } = require('ramda')
+const { map, multiply, prop } = require('ramda')
 
 const BEAM_WIDTH = 10
 const CYLINDER_RESOLUTION = 6
@@ -14,6 +14,7 @@ const GridBeamCsg = require('gridbeam-csg')(csg, {
 })
 
 const useCameraStore = require('../stores/camera').default
+const useSelectionStore = require('../stores/selection')
 
 const Complex = require('./complex')
 
@@ -33,6 +34,8 @@ function Beam (props) {
 
   const enableCameraControl = useCameraStore(state => state.enableControl)
   const disableCameraControl = useCameraStore(state => state.disableControl)
+  const enableSelectionBox = useSelectionStore(prop('enable'))
+  const disableSelectionBox = useSelectionStore(prop('disable'))
 
   const mesh = React.useMemo(
     () => {
@@ -51,61 +54,56 @@ function Beam (props) {
     [value.origin]
   )
 
-  const [originAtMoveStart, setOriginAtMoveStart] = React.useState(null)
+  const [atMoveStart, setAtMoveStart] = React.useState(null)
   const handleMove = React.useCallback(
     ev => {
       ev.stopPropagation()
-      if (ev.buttons > 0) {
-        if (originAtMoveStart == null) {
-          if (!isSelected) select()
-          setOriginAtMoveStart(value.origin)
-          return
-        }
+      if (ev.buttons <= 0) return
+      if (atMoveStart == null) return
 
-        const pointAtMoveStart = ev.point
-        var intersectionPoint = new THREE.Vector3()
-        var movementVector
+      const [pointAtMoveStart, originAtMoveStart] = atMoveStart
+      var intersectionPoint = new THREE.Vector3()
+      var movementVector
 
-        if (ev.shiftKey) {
-          // TODO is this correct?
-          const verticalPlane = new THREE.Plane(
-            new THREE.Vector3(1, 0, 0),
-            -ev.point.x
-          )
-          ev.ray.intersectPlane(verticalPlane, intersectionPoint)
-          movementVector = new THREE.Vector3(
-            0,
-            intersectionPoint.y - pointAtMoveStart.y,
-            0
-          )
-        } else {
-          const horizontalPlane = new THREE.Plane(
-            new THREE.Vector3(0, 1, 0),
-            -ev.point.y
-          )
-          ev.ray.intersectPlane(horizontalPlane, intersectionPoint)
-          movementVector = new THREE.Vector3()
-            .copy(intersectionPoint)
-            .sub(pointAtMoveStart)
-        }
-
-        const beamMovementVector = new THREE.Vector3()
-          .copy(movementVector)
-          .divideScalar(BEAM_WIDTH)
-          .round()
-
-        const nextOrigin = new THREE.Vector3()
-          .fromArray(originAtMoveStart)
-          .add(beamMovementVector)
-
-        const delta = new THREE.Vector3()
-          .copy(nextOrigin)
-          .sub(new THREE.Vector3().fromArray(value.origin))
-
-        move(delta.toArray())
+      if (ev.shiftKey) {
+        // TODO is this correct?
+        const verticalPlane = new THREE.Plane(
+          new THREE.Vector3(1, 0, 0),
+          -pointAtMoveStart.x
+        )
+        ev.ray.intersectPlane(verticalPlane, intersectionPoint)
+        movementVector = new THREE.Vector3(
+          0,
+          intersectionPoint.y - pointAtMoveStart.y,
+          0
+        )
+      } else {
+        const horizontalPlane = new THREE.Plane(
+          new THREE.Vector3(0, 1, 0),
+          -pointAtMoveStart.y
+        )
+        ev.ray.intersectPlane(horizontalPlane, intersectionPoint)
+        movementVector = new THREE.Vector3()
+          .copy(intersectionPoint)
+          .sub(pointAtMoveStart)
       }
+
+      const beamMovementVector = new THREE.Vector3()
+        .copy(movementVector)
+        .divideScalar(BEAM_WIDTH)
+        .round()
+
+      const nextOrigin = new THREE.Vector3()
+        .fromArray(originAtMoveStart)
+        .add(beamMovementVector)
+
+      const delta = new THREE.Vector3()
+        .copy(nextOrigin)
+        .sub(new THREE.Vector3().fromArray(value.origin))
+
+      move(delta.toArray())
     },
-    [uuid, value, originAtMoveStart]
+    [uuid, isSelected, value, atMoveStart]
   )
 
   const handleHover = React.useCallback(
@@ -129,7 +127,8 @@ function Beam (props) {
   const handleClick = React.useCallback(
     ev => {
       ev.stopPropagation()
-      if (!isSelected) select()
+      // console.log('click x', ev.detail)
+      // if (ev.detail > 1) select()
     },
     [uuid, select]
   )
@@ -151,12 +150,16 @@ function Beam (props) {
         ev.stopPropagation()
         ev.target.setPointerCapture(ev.pointerId)
         disableCameraControl()
+        disableSelectionBox()
+        if (!isSelected) select()
+        setAtMoveStart([ev.point, value.origin])
       }}
       onPointerUp={ev => {
         ev.stopPropagation()
         ev.target.releasePointerCapture(ev.pointerId)
         enableCameraControl()
-        setOriginAtMoveStart(null)
+        enableSelectionBox()
+        setAtMoveStart(null)
       }}
       onPointerMove={handleMove}
       onPointerOver={handleHover}

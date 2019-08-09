@@ -22,6 +22,7 @@ function SelectionBox (props) {
   const isSelecting = useSelectionStore(prop('isSelecting'))
   const startPoint = useSelectionStore(prop('startPoint'))
   const endPoint = useSelectionStore(prop('endPoint'))
+  const isEnabled = useSelectionStore(prop('isEnabled'))
   const selectableScreenBounds = useSelectionStore(
     prop('selectableScreenBounds')
   )
@@ -34,11 +35,11 @@ function SelectionBox (props) {
   // this optimization works because the camera doesn't move once selecting
   React.useEffect(
     () => {
-      if (isSelecting) {
-        updateSelectableScreenBounds({ scene, camera })
-      }
+      if (!isEnabled) return
+      if (!isSelecting) return
+      updateSelectableScreenBounds({ scene, camera })
     },
-    [isSelecting]
+    [isEnabled, isSelecting]
   )
 
   const selectionScreenBounds = React.useMemo(
@@ -54,19 +55,19 @@ function SelectionBox (props) {
 
   React.useEffect(
     () => {
-      if (isSelecting) {
-        var selections = []
-        Object.entries(selectableScreenBounds).forEach(
-          ([uuid, selectableBox]) => {
-            if (selectionScreenBounds.containsBox(selectableBox)) {
-              selections.push(uuid)
-            }
+      if (!isEnabled) return
+      if (!isSelecting) return
+      var selections = []
+      Object.entries(selectableScreenBounds).forEach(
+        ([uuid, selectableBox]) => {
+          if (selectionScreenBounds.containsBox(selectableBox)) {
+            selections.push(uuid)
           }
-        )
-        selects(selections)
-      }
+        }
+      )
+      selects(selections)
     },
-    [isSelecting, selectionScreenBounds, selectableScreenBounds]
+    [isEnabled, isSelecting, selectionScreenBounds, selectableScreenBounds]
   )
 
   return null

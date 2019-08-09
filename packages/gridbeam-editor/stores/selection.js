@@ -4,6 +4,9 @@ const { useState, useEffect } = require('react')
 const create = require('./').default
 
 const [useSelectionStore] = create(set => ({
+  isEnabled: true,
+  enable: () => set(state => { state.isEnabled = true }),
+  disable: () => set(state => { state.isEnabled = false }),
   isSelecting: false,
   startSelection: () =>
     set(state => {

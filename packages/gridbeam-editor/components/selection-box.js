@@ -15,8 +15,7 @@ function SelectionBox (props) {
   const endPoint = useSelectionStore(prop('endPoint'))
   const setStartPoint = useSelectionStore(prop('setStartPoint'))
   const setEndPoint = useSelectionStore(prop('setEndPoint'))
-
-  const { isDisabled = false } = props
+  const isEnabled = useSelectionStore(prop('isEnabled'))
 
   React.useEffect(
     () => {
@@ -26,6 +25,7 @@ function SelectionBox (props) {
       document.addEventListener('mouseup', handleMouseUp)
 
       return () => {
+        endSelection()
         document.removeEventListener('keyup', handleKeyUp)
         document.removeEventListener('mousedown', handleMouseDown)
         document.removeEventListener('mousemove', handleMouseMove)
@@ -33,26 +33,27 @@ function SelectionBox (props) {
       }
 
       function handleMouseDown (ev) {
-        if (isDisabled) return
+        console.log('isEnabled here', isEnabled)
+        if (!isEnabled) return
         if (!ev.shiftKey) return
         startSelection()
         handleStart(ev)
       }
 
       function handleMouseMove (ev) {
-        if (isDisabled) return
+        if (!isEnabled) return
         handleEnd(ev)
       }
 
       function handleMouseUp (ev) {
-        if (isDisabled) return
+        if (!isEnabled) return
         endSelection()
         handleEnd(ev)
       }
 
       function handleKeyUp (ev) {
-        if (isDisabled) return
-        if (ev.code === 'ShiftLeft') {
+        if (!isEnabled) return
+        if (ev.code === 'ShiftLeft' || ev.code === 'ShiftRight') {
           endSelection()
         }
       }
@@ -70,7 +71,7 @@ function SelectionBox (props) {
         })
       }
     },
-    [isDisabled]
+    [isEnabled]
   )
 
   return (

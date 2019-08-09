@@ -2,9 +2,10 @@ const React = require('react')
 const THREE = require('three')
 const { Canvas } = require('react-three-fiber')
 const { DEFAULT_BEAM_WIDTH } = require('gridbeam-csg')
-const { mapObjIndexed, pipe, prop, values } = require('ramda')
+const { map, pipe, prop, values } = require('ramda')
 
 const useModelStore = require('../stores/model')
+const { selectParts } = require('../selectors/parts')
 
 const Beam = require('./beam')
 const Camera = require('./camera')
@@ -13,42 +14,16 @@ const Selector = require('./selection-gl')
 module.exports = Vis
 
 function Vis (props) {
-  const parts = useModelStore(prop('parts'))
-  const hoveredUuids = useModelStore(prop('hoveredUuids'))
-  const hover = useModelStore(prop('hover'))
-  const unhover = useModelStore(prop('unhover'))
-  const selectedUuids = useModelStore(prop('selectedUuids'))
+  const parts = useModelStore(selectParts)
   const selects = useModelStore(prop('selects'))
-  const updateSelected = useModelStore(prop('updateSelected'))
 
   const renderParts = React.useMemo(
     () =>
-      pipe(
-        mapObjIndexed((part, uuid) => {
-          const Part = PART_TYPES[part.type]
-          return (
-            <Part
-              key={uuid}
-              uuid={uuid}
-              value={part}
-              isHovered={Boolean(uuid in hoveredUuids)}
-              hover={() => hover(uuid)}
-              unhover={() => unhover(uuid)}
-              isSelected={Boolean(uuid in selectedUuids)}
-              select={() => selects([uuid])}
-              move={delta =>
-                updateSelected(part => {
-                  part.origin[0] += delta[0]
-                  part.origin[1] += delta[1]
-                  part.origin[2] += delta[2]
-                })
-              }
-            />
-          )
-        }),
-        values
-      ),
-    [parts, hoveredUuids, selectedUuids]
+      map(part => {
+        const Part = PART_TYPES[part.type]
+        return <Part {...part} />
+      }),
+    [parts]
   )
 
   return (

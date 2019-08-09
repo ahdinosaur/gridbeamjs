@@ -25,57 +25,11 @@ export default base
 //      ]
 //    }
 
-function dino (config) {
-  return function nextConfig(set, get, api) {
-    const {
-      actions,
-      selectors,
-      effects
-    } = config
+function base (config) {
+  return create(log(immer(nextConfig)))
 
-    var store = [
-    ]
-
-    forEach(actions, (action, name) => {
-      store.actions = 
-    })
-    store.actions
-
-    return store
-
-
-    var connectedSelectors = mapValues(selectors, ([...deps, select], key) => (state) => {
-      var depValues = map(deps, pipe(prop, useStore)) // name => useStore(prop(name))
-    })
-  }
-}
-
-function dino (configs) {
-  var store = {}
-  configs.forEach(config => {
-    const {
-      name,
-      actions,
-      selectors,
-      effects
-    } = config
-
-    store[name] = create(actions)
-    forEach((select, name) => {
-      const [...args, handler] = select
-
-    }, selectors)
-    reactors[name] = 
-    store[name][2].subscribe(
-
-    ([...values(actions), ...values(selectors), ...values(effects)]).forEach(handler => handler(set, get, api))
-      
-    })
-    var path = [name, type, name]
-  })
-  return create(log(immer(config)))
-
-  function config(set, get, api) {
+  function nextConfig (set, get, api) {
+    return config(set, get, api)
   }
 }
 

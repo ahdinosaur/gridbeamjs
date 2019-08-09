@@ -1,6 +1,6 @@
 - store quality
   - "renderer"?
-- move all selected
+- include version in url data
 - bug: unlengthen < 0
 - undo and redo (back button)
 - optimize 3d

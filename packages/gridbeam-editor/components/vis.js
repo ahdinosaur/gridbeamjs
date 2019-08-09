@@ -21,7 +21,7 @@ function Vis (props) {
     () =>
       map(part => {
         const Part = PART_TYPES[part.type]
-        return <Part {...part} />
+        return <Part key={part.uuid} {...part} />
       }),
     [parts]
   )

@@ -1,11 +1,12 @@
 const React = require('react')
 const { DEFAULT_BEAM_WIDTH } = require('gridbeam-csg')
-const { prop } = require('ramda')
+const { complement, prop } = require('ramda')
 const { default: styled } = require('styled-components')
 
 console.log('DEFAULT_BEAM_WIDTH', DEFAULT_BEAM_WIDTH)
 
 const useModelStore = require('./stores/model')
+const useSelectionStore = require('./stores/selection')
 
 const { withProvider } = require('./components/provider')
 const Sidebar = require('./components/sidebar')
@@ -24,6 +25,25 @@ function GridBeamEditor ({ defaultParts }) {
   const loadParts = useModelStore(prop('loadParts'))
   const saveParts = useModelStore(prop('saveParts'))
 
+  const hoveredUuids = Object.keys(useModelStore(prop('hoveredUuids')))
+  const selectedUuids = Object.keys(useModelStore(prop('selectedUuids')))
+  const isHoveredAndSelected = useModelStore(state => {
+    var isHoveredAndSelected = false
+    hoveredUuids.forEach(hoveredUuid => {
+      if (selectedUuids.includes(hoveredUuid)) {
+        isHoveredAndSelected = true
+      }
+    })
+    return isHoveredAndSelected
+  })
+  const selected = useModelStore(state => {
+    return Object.keys(state.selectedUuids).map(uuid => parts[uuid])
+  })
+  const isNotSelecting = useSelectionStore(complement(prop('isSelecting')))
+  // const disableSelectionBox = isNotSelecting && selected.length > 0
+  const disableSelectionBox = isHoveredAndSelected
+  console.log('disable selection box', disableSelectionBox)
+
   React.useEffect(
     () => {
       if (!isLoaded) loadParts(setParts, setLoaded)
@@ -39,7 +59,7 @@ function GridBeamEditor ({ defaultParts }) {
     <Container>
       {/* <Sidebar /> */}
       <ActionButton />
-      <SelectionBox />
+      <SelectionBox isDisabled={disableSelectionBox} />
       <Vis />
       <Keyboard />
     </Container>

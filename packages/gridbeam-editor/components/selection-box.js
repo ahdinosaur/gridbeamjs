@@ -3,6 +3,7 @@ const { Box } = require('rebass')
 const { prop } = require('ramda')
 
 const useSelectionStore = require('../stores/selection')
+const useModelStore = require('../stores/model')
 
 module.exports = SelectionBox
 
@@ -15,53 +16,62 @@ function SelectionBox (props) {
   const setStartPoint = useSelectionStore(prop('setStartPoint'))
   const setEndPoint = useSelectionStore(prop('setEndPoint'))
 
-  React.useEffect(() => {
-    document.addEventListener('keyup', handleKeyUp)
-    document.addEventListener('mousedown', handleMouseDown)
-    document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseup', handleMouseUp)
+  const { isDisabled = false } = props
 
-    return () => {
-      document.removeEventListener('keyup', handleKeyUp)
-      document.removeEventListener('mousedown', handleMouseDown)
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleMouseUp)
-    }
+  React.useEffect(
+    () => {
+      document.addEventListener('keyup', handleKeyUp)
+      document.addEventListener('mousedown', handleMouseDown)
+      document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('mouseup', handleMouseUp)
 
-    function handleMouseDown (ev) {
-      if (!ev.shiftKey) return
-      startSelection()
-      handleStart(ev)
-    }
-
-    function handleMouseMove (ev) {
-      handleEnd(ev)
-    }
-
-    function handleMouseUp (ev) {
-      endSelection()
-      handleEnd(ev)
-    }
-
-    function handleKeyUp (ev) {
-      if (ev.code === 'ShiftLeft') {
-        endSelection()
+      return () => {
+        document.removeEventListener('keyup', handleKeyUp)
+        document.removeEventListener('mousedown', handleMouseDown)
+        document.removeEventListener('mousemove', handleMouseMove)
+        document.removeEventListener('mouseup', handleMouseUp)
       }
-    }
 
-    function handleStart (ev) {
-      setStartPoint({
-        x: ev.clientX / window.innerWidth * 2 - 1,
-        y: -(ev.clientY / window.innerHeight) * 2 + 1
-      })
-    }
-    function handleEnd (ev) {
-      setEndPoint({
-        x: ev.clientX / window.innerWidth * 2 - 1,
-        y: -(ev.clientY / window.innerHeight) * 2 + 1
-      })
-    }
-  }, [])
+      function handleMouseDown (ev) {
+        if (isDisabled) return
+        if (!ev.shiftKey) return
+        startSelection()
+        handleStart(ev)
+      }
+
+      function handleMouseMove (ev) {
+        if (isDisabled) return
+        handleEnd(ev)
+      }
+
+      function handleMouseUp (ev) {
+        if (isDisabled) return
+        endSelection()
+        handleEnd(ev)
+      }
+
+      function handleKeyUp (ev) {
+        if (isDisabled) return
+        if (ev.code === 'ShiftLeft') {
+          endSelection()
+        }
+      }
+
+      function handleStart (ev) {
+        setStartPoint({
+          x: ev.clientX / window.innerWidth * 2 - 1,
+          y: -(ev.clientY / window.innerHeight) * 2 + 1
+        })
+      }
+      function handleEnd (ev) {
+        setEndPoint({
+          x: ev.clientX / window.innerWidth * 2 - 1,
+          y: -(ev.clientY / window.innerHeight) * 2 + 1
+        })
+      }
+    },
+    [isDisabled]
+  )
 
   return (
     isSelecting && <SelectBox startPoint={startPoint} endPoint={endPoint} />

@@ -57,7 +57,7 @@ function Beam (props) {
       ev.stopPropagation()
       if (ev.buttons > 0) {
         if (originAtMoveStart == null) {
-          select()
+          if (!isSelected) select()
           setOriginAtMoveStart(value.origin)
           return
         }
@@ -129,8 +129,7 @@ function Beam (props) {
   const handleClick = React.useCallback(
     ev => {
       ev.stopPropagation()
-      // console.log('click', uuid)
-      select()
+      if (!isSelected) select()
     },
     [uuid, select]
   )

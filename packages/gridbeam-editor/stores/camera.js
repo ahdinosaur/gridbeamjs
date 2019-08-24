@@ -1,9 +1,7 @@
-import create from 'zustand'
+const create = require('./')
 
-const [useCameraStore] = create(set => ({
-  controlEnabled: true,
-  enableControl: () => set(state => (state.controlEnabled = true)),
-  disableControl: () => set(state => (state.controlEnabled = false))
-}))
-
-export default useCameraStore
+module.exports = {
+  controlEnabled: set => true,
+  enableControl: set => () => set(state => (state.controlEnabled = true)),
+  disableControl: set => () => set(state => (state.controlEnabled = false))
+}

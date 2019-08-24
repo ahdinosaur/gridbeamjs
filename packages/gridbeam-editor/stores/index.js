@@ -1,35 +1,52 @@
-import produce from 'immer'
-import create from 'zustand'
+const produce = require('immer')
+const create = require('zustand').default
+const { map, mapObjIndexed, mergeAll, nthArg, pipe, prop } = require('ramda')
 
-export default base
+module.exports = base
 
 //  new store
 //  - single zustand store
 //  - many "dino" stores
 //
 //  - name
-//  - actions: {
+//  - state,
+//  - do: {
 //      action: (set) => (...args) => set(state => {
 //        state.key = value
 //      })
 //    }
-//  - selectors: {
-//      select: [
+//  - select: {
+//      selector: [
 //        name,
 //        (...values) => selection
 //      ]
-//  - effects: {
-//      react: [
+//  - react: {
+//      reactor: [
 //        name,
 //        (...values) => action(...args) | null
 //      ]
 //    }
 
 function base (config) {
-  return create(log(immer(nextConfig)))
+  const { state = {}, exec = {}, select = {} } = config
 
-  function nextConfig (set, get, api) {
-    return config(set, get, api)
+  const storeConfig = (set, get, api) =>
+    Object.values(exec).reduce(
+      (sofar, [key, executor]) =>
+        Object.assign(sofar, { [key]: executor(set, get, api) }),
+      state
+    )
+
+  const [useStore, storeApi] = create(log(immer(storeConfig)))
+
+  const selectState = mapObjIndexed(pipe(nthArg(1), prop), state)
+  const selectExec = mapObjIndexed(pipe(nthArg(1), prop), exec)
+  const useSelect = map(useStore, mergeAll([select, selectState, selectExec]))
+
+  return {
+    useStore,
+    useSelect,
+    api: storeApi
   }
 }
 

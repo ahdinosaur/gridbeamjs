@@ -25,20 +25,6 @@ function GridBeamEditor ({ defaultParts }) {
   const loadParts = useModelStore(prop('loadParts'))
   const saveParts = useModelStore(prop('saveParts'))
 
-  const hoveredUuids = Object.keys(useModelStore(prop('hoveredUuids')))
-  const selectedUuids = Object.keys(useModelStore(prop('selectedUuids')))
-  const isHoveredAndSelected =
-    hoveredUuids.length > 0 &&
-    hoveredUuids.reduce((sofar, hoveredUuid) => {
-      return sofar && selectedUuids.includes(hoveredUuid)
-    }, true)
-  const selected = useModelStore(state => {
-    return Object.keys(state.selectedUuids).map(uuid => parts[uuid])
-  })
-  const isNotSelecting = useSelectionStore(complement(prop('isSelecting')))
-  // const disableSelectionBox = isNotSelecting && selected.length > 0
-  // const disableSelectionBox = isHoveredAndSelected
-
   React.useEffect(
     () => {
       if (!isLoaded) loadParts(setParts, setLoaded)

@@ -1,0 +1,45 @@
+{
+  "name": "gridbeam-csg",
+  "version": "0.0.0",
+  "description": "GridBeam using constructive solid geometry (CSG)",
+  "main": "index.js",
+  "scripts": {
+    "start": "node example | meshview",
+    "test": "dependency-check . && dependency-check . --extra --no-dev -i es2040 -i @jscad/csg"
+  },
+  "browserify": {
+    "transform": [
+      "es2040"
+    ]
+  },
+  "standard": {
+    "globals": []
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahdinosaur/gridbeamjs/tree/master/packages/gridbeam-csg.git"
+  },
+  "keywords": [
+    "gridbeam",
+    "csg",
+    "cad"
+  ],
+  "author": "Mikey <michael.williams@enspiral.com> (https://dinosaur.is)",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/ahdinosaur/gridbeamjs/issues"
+  },
+  "homepage": "https://github.com/ahdinosaur/gridbeamjs/tree/master/packages/gridbeam-csg/#readme",
+  "devDependencies": {
+    "@jscad/csg": "^0.7.0",
+    "csg-to-mesh": "^1.0.2",
+    "dependency-check": "^3.1.0",
+    "meshview": "^1.3.3"
+  },
+  "dependencies": {
+    "es2040": "^1.2.3"
+  },
+  "peerDependencies": {
+    "@jscad/csg": "^0.7.0"
+  }
+}
